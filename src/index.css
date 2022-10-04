@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+::-webkit-scrollbar {
+    width: 12px;               /* width of the entire scrollbar */
+}
+  
+::-webkit-scrollbar-track {
+    background: gray;        /* color of the tracking area */
+}
+  
+::-webkit-scrollbar-thumb {
+    background-color: #1f2937;
+    border-radius: 5px;
+    border: 2px solid rgb(0, 140, 255);
+}
+.css-f3jnds-MuiDataGrid-columnHeaders {
+    background-color: #1f2937 !important;
+    color: white;
+}
+
+.MuiDataGrid-row:hover  {
+    background-color: #697d99 !important;
+}
+
+.MuiDataGrid-row:nth-child(even){
+    background-color: #1f2937;
+}
+.MuiDataGrid-footerContainer {
+    background-color: #1f2937;
+    color: white;
+    height: 5px!important;
+}
+
+.MuiToolbar-root {
+    color: white;
+}
+
+.css-1knaqv7-MuiButtonBase-root-MuiButton-root {
+    background-color: white;
+    color: white!important;
+}
+
+.css-1knaqv7-MuiButtonBase-root-MuiButton-root:hover {
+    background-color: #1f2937!important;
+    color: white!important;
+}
