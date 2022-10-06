@@ -47,7 +47,7 @@ export default function DataGridDemo() {
         RefreshActualValues()
         setInterval(() => {
             RefreshActualValues()
-        }, 1000);
+        }, 3000);
     }, [])
 
     function CustomToolbar(toolbar) {

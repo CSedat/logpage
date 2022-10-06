@@ -176,7 +176,7 @@ export default function DataGridDemo() {
             setCevizseviye(jsondata.Ints.cevizseviye)
         });
         
-        }, 1000);
+        }, 3000);
     }, [])
 
     function CustomToolbar(toolbar) {
