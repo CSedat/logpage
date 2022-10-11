@@ -85,21 +85,22 @@ export default function DataGridDemo() {
                 const element = jsondata[g];
                 let net = element.kantar - element.dara
                 row.push({...element, net: net});
-
                 let d = element.date.split('/')[0]
                 let h = element.hour.split(':')[0]
                 let nowd = moment().format('DD')
                 if (d === nowd) { 
-                    let nett = parseInt(element.kantar - element.dara)
-                    if (h >= 0 && h <= 7) {
-                        oldv1 += nett
-                        setTozv1(oldv1)
-                    } else if (h >= 8 && h <= 15) {
-                        oldv2 += nett
-                        setTozv2(oldv2)
-                    } else if (h >= 16 && h <= 23) {
-                        oldv3 += nett
-                        setTozv3(oldv3)
+                    if(element.kantar.search('V')){
+                        let nett = parseFloat(element.kantar - element.dara)
+                        if (h >= 0 && h <= 7) {
+                            oldv1 += nett
+                            setTozv1(oldv1)
+                        } else if (h >= 8 && h <= 15) {
+                            oldv2 += nett
+                            setTozv2(oldv2)
+                        } else if (h >= 16 && h <= 23) {
+                            oldv3 += nett
+                            setTozv3(oldv3)
+                        }
                     }
                 }
             }
@@ -115,21 +116,22 @@ export default function DataGridDemo() {
                 const element = jsondata[g];
                 let net = element.kantar - element.dara
                 row.push({...element, net: net});
-
                 let d = element.date.split('/')[0]
                 let h = element.hour.split(':')[0]
                 let nowd = moment().format('DD')
                 if (d === nowd) { 
-                    let nett = parseInt(element.kantar - element.dara)
-                    if (h >= 0 && h <= 7) {
-                        oldv1 += nett
-                        setFindikv1(oldv1)
-                    } else if (h >= 8 && h <= 15) {
-                        oldv2 += nett
-                        setFindikv2(oldv2)
-                    } else if (h >= 16 && h <= 23) {
-                        oldv3 += nett
-                        setFindikv3(oldv3)
+                    if(element.kantar.search('V')){
+                        let nett = parseFloat(element.kantar - element.dara)
+                        if (h >= 0 && h <= 7) {
+                            oldv1 += nett
+                            setFindikv1(oldv1)
+                        } else if (h >= 8 && h <= 15) {
+                            oldv2 += nett
+                            setFindikv2(oldv2)
+                        } else if (h >= 16 && h <= 23) {
+                            oldv3 += nett
+                            setFindikv3(oldv3)
+                        }
                     }
                 }
             }
@@ -145,21 +147,22 @@ export default function DataGridDemo() {
                 const element = jsondata[g];
                 let net = element.kantar - element.dara
                 row.push({...element, net: net});
-
                 let d = element.date.split('/')[0]
                 let h = element.hour.split(':')[0]
                 let nowd = moment().format('DD')
                 if (d === nowd) { 
-                    let nett = parseInt(element.kantar - element.dara)
-                    if (h >= 0 && h <= 7) {
-                        oldv1 += nett
-                        setCevizv1(oldv1)
-                    } else if (h >= 8 && h <= 15) {
-                        oldv2 += nett
-                        setCevizv2(oldv2)
-                    } else if (h >= 16 && h <= 23) {
-                        oldv3 += nett
-                        setCevizv3(oldv3)
+                    if(element.kantar.search('V')){
+                        let nett = parseFloat(element.kantar - element.dara)
+                        if (h >= 0 && h <= 7) {
+                            oldv1 += nett
+                            setCevizv1(oldv1)
+                        } else if (h >= 8 && h <= 15) {
+                            oldv2 += nett
+                            setCevizv2(oldv2)
+                        } else if (h >= 16 && h <= 23) {
+                            oldv3 += nett
+                            setCevizv3(oldv3)
+                        }
                     }
                 }
             }
