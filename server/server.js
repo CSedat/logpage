@@ -4,13 +4,13 @@ var fileServer = new static.Server('./client');
 var port = process.env.PORT || 8000;
 http.createServer(function (req, res) {
     fileServer.serve(req, res);
-    if (req.url != "/") {
-        // console.log('Page redirected to /');
-        // res.writeHead(302, {
-        //     location: "http://10.35.13.108:8000",
-        // });
-        // res.end();
-    }
+    // if (req.url != "/") {
+    //     console.log('Page redirected to /');
+    //     res.writeHead(302, {
+    //         location: "http://10.35.13.108:8000",
+    //     });
+    //     res.end();
+    // }
 }).listen(port);
 console.log(`Http server running at http://127.0.0.1:${port}/`);
 
@@ -140,6 +140,10 @@ app.get('/api/getambardata', function (req, res) {
     res.sendFile('./ambardata.json', { root: __dirname });
 });
 
+app.get('/api/getlabdata', function (req, res) {
+    res.sendFile('./laboratuvar/data.json', { root: __dirname });
+});
+
 app.post('/api/getambardatafromdate', function (req, res) {
     var date = req.body.date;
     var dateFull = req.body.dateFull;
@@ -239,7 +243,6 @@ app.get("/takeX", (req, res) => {
         try {
             resolve(req.query);
         } catch (e) {
-            
             console.log(e);
         }
     })
@@ -247,7 +250,9 @@ app.get("/takeX", (req, res) => {
     prof.then(function (jsondata) {
         if (jsondata == undefined) { jsondata = 0; }
         var json = fs.readFileSync('./data.json');
+        var labdata = fs.readFileSync('./laboratuvar/data.json');
         var Obj = JSON.parse(json);
+        var labjson = JSON.parse(labdata);
         var ss = moment().format('H');
         let vard
         if (ss >= 0 && ss <= 7) {
@@ -289,6 +294,17 @@ app.get("/takeX", (req, res) => {
         fs.writeFile('./data.json', newData, err => {
             if (err) throw err;
             console.log(`${vard} PDC saved!`);
+        });
+
+        labjson.unshift({
+            slurry: parseInt(jsondata["Slurry"]).toFixed(),
+            time: GetDate(),
+            vardiya: vard,
+        });
+        var newLabData = JSON.stringify(labjson);
+        fs.writeFile('./laboratuvar/data.json', newLabData, err => {
+            if (err) throw err;
+            console.log(`${vard} Lab saved!`);
         });
     }).catch(function (hata) {
         console.log(hata)
@@ -346,6 +362,7 @@ app.get("/takeX", (req, res) => {
         }, 1000);
     }
 })
+
 
 function GetDate(bool) {
     if (bool) {
@@ -592,7 +609,6 @@ crusherPLC.initiateConnection({
 function crusherPLCconnected(err) {
     if (typeof (err) !== "undefined") {
         console.log(err);
-        
     }
     crusherPLC.setTranslationCB(function (tag) {
         return crusherPLCvariables[tag];
