@@ -13,6 +13,7 @@ import { Navigate } from "react-router-dom";
 import PDCPage from './PDCPage'
 import YKSPage from './YKSPage'
 import HourlySlurry from './HourlySlurry'
+import LabPage from './LabPage'
 import AmbarPump from './AmbarPump'
 
 
@@ -49,12 +50,10 @@ export default function FullWidthTabs() {
 
     const handleChange = (event, newValue) => {
       setValue(newValue);
-      console.log(newValue)
     };
     
     const handleChangeIndex = (index) => {
       setValue(index);
-      console.log(index)
     };
 
     return (
@@ -86,8 +85,13 @@ export default function FullWidthTabs() {
                             : ""
                         }
                         {
+                            user?.user?.roles.find(e => e === 'slurry') ? 
+                                <Tab label="Şlam Katı Madde Hesap Tablosu" key={3} value={3} {...a11yProps(3)} />
+                            : ""
+                        }
+                        {
                             user?.user?.roles.find(e => e === 'ambar') ? 
-                                <Tab label="Ambar Pompa" key={3} value={3} {...a11yProps(3)} />
+                                <Tab label="Ambar Pompa" key={4} value={4} {...a11yProps(4)} />
                             : ""
                         }
                     </Tabs>
@@ -116,6 +120,12 @@ export default function FullWidthTabs() {
                     </TabPanel>
 
                     <TabPanel className=" h-[90.6vh] w-full " value={value} index={3} dir={theme.direction}>
+                        <div className=' text-white h-full'>
+                            <LabPage />
+                        </div>
+                    </TabPanel>
+
+                    <TabPanel className=" h-[90.6vh] w-full " value={value} index={4} dir={theme.direction}>
                         <div className=' text-white h-full'>
                             <AmbarPump />
                         </div>

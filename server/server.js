@@ -144,6 +144,48 @@ app.get('/api/getlabdata', function (req, res) {
     res.sendFile('./laboratuvar/data.json', { root: __dirname });
 });
 
+app.post('/api/labdatasavenem', function (req, res) {
+    var data = req.body;
+
+    fs.readFile(`./laboratuvar/data.json`, null, function (error, r) {
+        if (error) {console.log(error);res.send('error');return}
+        let d = JSON.parse(r);
+        for (let l = 0; l < d.length; l++) {
+            let element = d[l];
+            if (element.id == data.id) {
+                element['nemdata'] = data;
+                fs.writeFile('./laboratuvar/data.json', JSON.stringify(d), err => {
+                    if (err) throw err;
+                    console.log(`${data.id} nem saved!`);
+                });
+                res.send('success');
+                break;
+            }
+        }
+    });
+});
+
+app.post('/api/labdatayogunluk', function (req, res) {
+    var data = req.body;
+
+    fs.readFile(`./laboratuvar/data.json`, null, function (error, r) {
+        if (error) {console.log(error);res.send('error');return}
+        let d = JSON.parse(r);
+        for (let l = 0; l < d.length; l++) {
+            let element = d[l];
+            if (element.id == data.id) {
+                element['yogunluk'] = data.yogunluk;
+                fs.writeFile('./laboratuvar/data.json', JSON.stringify(d), err => {
+                    if (err) throw err;
+                    console.log(`${data.id} yoğunluk saved!`);
+                });
+                res.send('success');
+                break;
+            }
+        }
+    });
+});
+
 app.post('/api/getambardatafromdate', function (req, res) {
     var date = req.body.date;
     var dateFull = req.body.dateFull;
@@ -297,9 +339,12 @@ app.get("/takeX", (req, res) => {
         });
 
         labjson.unshift({
+            id: Date.now(),
             slurry: parseInt(jsondata["Slurry"]).toFixed(),
             time: GetDate(),
             vardiya: vard,
+            nemdata: {},
+            yogunluk: null,
         });
         var newLabData = JSON.stringify(labjson);
         fs.writeFile('./laboratuvar/data.json', newLabData, err => {
@@ -387,7 +432,6 @@ const { Console } = require('console');
 var mainPLC = new nodes7;
 var doneReading = false;
 var doneWriting = false;
-
 var variables = {
     m3Slurry: 'DB80,REAL0',
     SlurryTotal: 'DB80,REAL16',
@@ -397,7 +441,6 @@ var variables = {
     MainPLCPdc710: 'DB13,REAL20',
     D328Values: 'DB85,REAL0.6',
 };
-
 mainPLC.initiateConnection({
     port: 102,
     host: '10.35.17.10',
@@ -406,8 +449,6 @@ mainPLC.initiateConnection({
     timeout: 30000,
     debug: true
 }, connected);
-
-
 function connected(err) {
     if (typeof (err) !== "undefined") {
         console.log(err);
@@ -418,7 +459,6 @@ function connected(err) {
     mainPLC.addItems(['m3Slurry', 'HourlySlurry', 'SlurryTotal', 'Pac3200', 'MainPLCMBPdc', 'MainPLCPdc710', 'D328Values']);
     mainPLC.readAllItems(valuesReady);
 }
-
 function valuesReady(err, values) {
     if (err) { console.log('\x1b[31m', `Plc Bağlantısı Yok yada Okunan Değerlerde Hata Var` ,'\x1b[0m'); return }
     mainPLC.readAllItems(valuesReady);
@@ -444,7 +484,6 @@ function valuesReady(err, values) {
         kwh: values.D328Values[5].toFixed(),
     }
 }
-
 function valuesWritten(err) {
     if (err) { console.log("YAZILAN DEĞERLERDE HATA VAR"); }
     console.log("Yazıldı.");
@@ -454,15 +493,11 @@ function valuesWritten(err) {
 app.get('/api/getPLCData', function (req, res) {
     res.send(plcdata);
 });
-
-
 var ambarPLC = new nodes7;
-
 var ambarPLCvariables = {
     status: 'DB2,INT2',
     seviye: 'DB1,REAL0',
 };
-
 ambarPLC.initiateConnection({
     port: 102,
     host: '10.35.14.184',
@@ -471,12 +506,10 @@ ambarPLC.initiateConnection({
     timeout: 30000,
     debug: true
 }, ambarPLCconnected);
-
-
 function ambarPLCconnected(err) {
     if (typeof (err) !== "undefined") {
         console.log(err);
-    
+ 
     }
     ambarPLC.setTranslationCB(function (tag) {
         return ambarPLCvariables[tag];
@@ -484,15 +517,12 @@ function ambarPLCconnected(err) {
     ambarPLC.addItems(['status', 'seviye']);
     ambarPLC.readAllItems(ambarPLCvaluesReady);
 }
-
 function ambarPLCvaluesReady(err, values) {
     if (err) { console.log('\x1b[31m', `Plc Bağlantısı Yok yada Okunan Değerlerde Hata Var` ,'\x1b[0m'); return }
     ambarPLC.readAllItems(ambarPLCvaluesReady);
     plcdata.ambarstatus = values.status;
     plcdata.ambarseviye = values.seviye;
-
 }
-
 // setInterval(() => {
 //     fs.readFile('./ambardata.json', null, function (error, data) {
 //         if (error) {  console.log(error); }
@@ -519,7 +549,6 @@ function ambarPLCvaluesReady(err, values) {
 //         });
 //     });
 // }, 60000);
-
 function GetFileDate(bb) {
     var today = new Date();
     if(bb){
@@ -530,7 +559,6 @@ function GetFileDate(bb) {
         return date;
     }
 }
-
 function SaveAmbarData() {
     fs.readFile(`./ambardata/${GetFileDate(true)}/${GetFileDate()}.json`, null, function (error, data) {
         if (error) {  console.log(error); }
@@ -587,15 +615,12 @@ setInterval(() => {
         });
     }
 } , 60000);
-
 var crusherPLC = new nodes7;
-
 var crusherPLCvariables = {
     crusherkhw: 'MR152',
     bc1bpdc1: 'DB57,REAL0',
     bc1bpdc2: 'DB57,REAL18',
 };
-
 crusherPLC.initiateConnection({
     port: 102,
     host: '10.35.17.11',
@@ -604,8 +629,6 @@ crusherPLC.initiateConnection({
     timeout: 30000,
     debug: true
 }, crusherPLCconnected);
-
-
 function crusherPLCconnected(err) {
     if (typeof (err) !== "undefined") {
         console.log(err);
@@ -616,7 +639,6 @@ function crusherPLCconnected(err) {
     crusherPLC.addItems(['crusherkhw', 'bc1bpdc1', 'bc1bpdc2']);
     crusherPLC.readAllItems(crusherPLCvaluesReady);
 }
-
 function crusherPLCvaluesReady(err, values) {
     if (err) { console.log('\x1b[31m', `Plc Bağlantısı Yok yada Okunan Değerlerde Hata Var` ,'\x1b[0m'); return }
     crusherPLC.readAllItems(crusherPLCvaluesReady);
@@ -625,5 +647,5 @@ function crusherPLCvaluesReady(err, values) {
         bc1b_1: parseInt(values.bc1bpdc1.toFixed()),
         bc1b_2: parseInt(values.bc1bpdc2.toFixed()),
     }
-    
+ 
 }
