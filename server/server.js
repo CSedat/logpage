@@ -67,25 +67,25 @@ const users = [
         id: 1,
         username: "sedatcapar",
         password: "ss1q2w",
-        roles:['pdc', 'yks', 'slurry', 'ambar']
+        roles:['pdc', 'yks', 'slurry', 'kmadde', 'ambar']
     },
     {
         id: 2,
         username: "tunahansimsek",
         password: "Ts159753",
-        roles:['pdc', 'yks', 'slurry', 'ambar']
+        roles:['pdc', 'yks', 'slurry', 'kmadde', 'ambar']
     },
     {
         id: 3,
         username: "irfansariyar",
         password: "is1425",
-        roles:['pdc', 'slurry', 'ambar']
+        roles:['pdc', 'slurry', 'kmadde', 'ambar']
     },
     {
         id: 4,
         username: "tansukoralay",
         password: "ts1q2w",
-        roles:['pdc', 'slurry', 'ambar']
+        roles:['pdc', 'slurry', 'kmadde', 'ambar']
     },
     {
         id: 5,
@@ -95,9 +95,9 @@ const users = [
     },
     {
         id: 6,
-        username: "lavvarkantar",
-        password: "1925",
-        roles:['pdc', 'slurry', 'ambar']
+        username: "laboratuvar",
+        password: "7452",
+        roles:['pdc', 'slurry', 'kmadde']
     },
 ]
 
@@ -146,7 +146,7 @@ app.get('/api/getlabdata', function (req, res) {
 
 app.post('/api/labdatasavenem', function (req, res) {
     var data = req.body;
-
+    
     fs.readFile(`./laboratuvar/data.json`, null, function (error, r) {
         if (error) {console.log(error);res.send('error');return}
         let d = JSON.parse(r);
@@ -292,8 +292,8 @@ app.get("/takeX", (req, res) => {
     prof.then(function (jsondata) {
         if (jsondata == undefined) { jsondata = 0; }
         var json = fs.readFileSync('./data.json');
-        var labdata = fs.readFileSync('./laboratuvar/data.json');
         var Obj = JSON.parse(json);
+        var labdata = fs.readFileSync('./laboratuvar/data.json');
         var labjson = JSON.parse(labdata);
         var ss = moment().format('H');
         let vard
@@ -392,6 +392,24 @@ app.get("/takeX", (req, res) => {
                         kWh,
                         kWhvard,
                     });
+
+                    var labdata = fs.readFileSync('./laboratuvar/data.json');
+                    var labjson = JSON.parse(labdata);
+                    labjson.unshift({
+                        id: Date.now(),
+                        slurry: Slurry,
+                        time: GetDate(),
+                        vardiya: vard,
+                        nemdata: {},
+                        yogunluk: null,
+                    });
+                    var newLabData = JSON.stringify(labjson);
+                    fs.writeFile('./laboratuvar/data.json', newLabData, err => {
+                        if (err) throw err;
+                        console.log(`${vard} Lab total saved!`);
+                    });
+
+
                     fs.writeFile('./data.json', JSON.stringify(jdata), err => {
                         if (err) throw err;
                         console.log(`${GetDate(false)} Total saved!`);
@@ -509,7 +527,7 @@ ambarPLC.initiateConnection({
 function ambarPLCconnected(err) {
     if (typeof (err) !== "undefined") {
         console.log(err);
- 
+
     }
     ambarPLC.setTranslationCB(function (tag) {
         return ambarPLCvariables[tag];
@@ -647,5 +665,5 @@ function crusherPLCvaluesReady(err, values) {
         bc1b_1: parseInt(values.bc1bpdc1.toFixed()),
         bc1b_2: parseInt(values.bc1bpdc2.toFixed()),
     }
- 
+
 }

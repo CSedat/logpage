@@ -85,7 +85,7 @@ export default function FullWidthTabs() {
                             : ""
                         }
                         {
-                            user?.user?.roles.find(e => e === 'slurry') ? 
+                            user?.user?.roles.find(e => e === 'kmadde') ? 
                                 <Tab label="Şlam Katı Madde Hesap Tablosu" key={3} value={3} {...a11yProps(3)} />
                             : ""
                         }
