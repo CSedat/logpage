@@ -39,9 +39,9 @@ export default function LabPage(){
                         <th className="text-xs font-medium bg-gray-700 text-center border p-1 rounded m-1">Tarih</th>
                         <th className="text-xs font-medium bg-gray-700 text-center border p-1 rounded m-1">Vardiya</th>
                         <th className="text-xs font-medium bg-gray-700 text-center border p-1 rounded m-1">Nem Analizi</th>
-                        <th className="text-xs font-medium bg-gray-700 text-center border p-1 rounded m-1">% Katı Madde Miktarı</th>
-                        <th className="text-xs font-medium bg-gray-700 text-center border p-1 rounded m-1">Yoğunluk (g/cm3)</th>
-                        <th className="text-xs font-medium bg-gray-700 text-center border p-1 rounded m-1">Şlam</th>
+                        <th className="text-xs font-medium bg-gray-700 text-center border p-1 rounded m-1">Katı Madde Miktarı (%)</th>
+                        <th className="text-xs font-medium bg-gray-700 text-center border p-1 rounded m-1">Yoğunluk (t/m³)</th>
+                        <th className="text-xs font-medium bg-gray-700 text-center border p-1 rounded m-1">Şlam (m³)</th>
                         <th className="text-xs font-medium bg-gray-700 text-center border p-1 rounded m-1">Kuru Katı Madde (t)</th>
                     </tr>
                 </thead>
@@ -223,7 +223,7 @@ function YogunlukTotal(props) {
     const [yogunluktotaltotal, setYogunlukTotal] = useState(0);
     useEffect(() => {
         let table = document.getElementById("veritablo").rows
-        let v1 = 0, v2 = 0, v3 = 0;
+        let v1 = 0.0, v2 = 0.0, v3 = 0.0;
         for (let tb = 0; tb < table.length; tb++) {
             const element = table[tb];
             let time = element.querySelector("tr > th").innerHTML
@@ -231,9 +231,10 @@ function YogunlukTotal(props) {
             if (vardiya === "V1" || vardiya === "V2" || vardiya === "V3") {
                 if (time === props.data.time ) {
                     let yogunluk = element.querySelector("#yogunluk  > div > p:nth-child(2)")?.innerHTML
-                    if (vardiya === "V1" ) v1 = props.data.slurry * yogunluk
-                    if (vardiya === "V2" ) v2 = props.data.slurry * yogunluk
-                    if (vardiya === "V3" ) v3 = props.data.slurry * yogunluk
+                    let slurry = element.querySelector("#slam")?.innerHTML
+                    if (vardiya === "V1" ) v1 = parseFloat(slurry) * parseFloat(yogunluk)
+                    if (vardiya === "V2" ) v2 = parseFloat(slurry) * parseFloat(yogunluk)
+                    if (vardiya === "V3" ) v3 = parseFloat(slurry) * parseFloat(yogunluk)
                 }
             }
         }
