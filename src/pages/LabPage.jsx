@@ -238,7 +238,7 @@ function YogunlukTotal(props) {
                 }
             }
         }
-        setYogunlukTotal(((v1+v2+v3)/props.data.slurry).toFixed(2));
+        setYogunlukTotal(((v1+v2+v3)/props.data.slurry).toFixed(2).replaceAll('NaN', '0'));
     }, [props]);
 
     return yogunluktotaltotal
