@@ -399,14 +399,14 @@ app.get("/takeX", (req, res) => {
                         id: Date.now(),
                         slurry: Slurry,
                         time: GetDate(),
-                        vardiya: vard,
+                        vardiya: "Toplam",
                         nemdata: {},
                         yogunluk: null,
                     });
                     var newLabData = JSON.stringify(labjson);
                     fs.writeFile('./laboratuvar/data.json', newLabData, err => {
                         if (err) throw err;
-                        console.log(`${vard} Lab total saved!`);
+                        console.log(`Toplam Lab total saved!`);
                     });
 
 
