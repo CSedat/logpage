@@ -99,6 +99,18 @@ const users = [
         password: "7452",
         roles:['pdc', 'slurry', 'kmadde']
     },
+    {
+        id: 7,
+        username: "kaanuzuner",
+        password: "ku123456.",
+        roles:['pdc', 'slurry', 'kmadde']
+    },
+    {
+        id: 8,
+        username: "aysunkupcu",
+        password: "ak123456..",
+        roles:['pdc', 'slurry', 'kmadde']
+    },
 ]
 
 app.listen(appport, () => {
