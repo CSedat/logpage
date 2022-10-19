@@ -52,7 +52,9 @@ var plcdata = {
         level: 0,
         kw: 0,
         kwh: 0,
-    }
+    },
+    D609Status: 0,
+    D610Status: 0,
 }
 
 
@@ -67,13 +69,13 @@ const users = [
         id: 1,
         username: "sedatcapar",
         password: "ss1q2w",
-        roles:['pdc', 'yks', 'slurry', 'kmadde', 'ambar']
+        roles:['pdc', 'yks', 'slurry', 'kmadde', 'ambar', 'press']
     },
     {
         id: 2,
         username: "tunahansimsek",
         password: "Ts159753",
-        roles:['pdc', 'yks', 'slurry', 'kmadde', 'ambar']
+        roles:['pdc', 'yks', 'slurry', 'kmadde', 'ambar', 'press']
     },
     {
         id: 3,
@@ -103,7 +105,7 @@ const users = [
         id: 7,
         username: "kaanuzuner",
         password: "ku123456.",
-        roles:['pdc', 'slurry', 'kmadde']
+        roles:['pdc', 'slurry', 'kmadde', 'ambar']
     },
     {
         id: 8,
@@ -209,6 +211,13 @@ app.post('/api/getambardatafromdate', function (req, res) {
         }
         res.send(data);
     });
+});
+
+app.post('/api/getpressdatafromdate', function (req, res) {
+    var date = req.body.date;
+    var dateFull = req.body.dateFull;
+    let data = fs.readFileSync(`./pressdata/${date}/${dateFull}.json`);
+    res.send(data);
 });
 
 app.get('/api/saveslurry', function (req, res) {
@@ -676,6 +685,207 @@ function crusherPLCvaluesReady(err, values) {
     plcdata.crusherpdc = {
         bc1b_1: parseInt(values.bc1bpdc1.toFixed()),
         bc1b_2: parseInt(values.bc1bpdc2.toFixed()),
-    }
+    };
+}
 
+var D609_Press = new nodes7;
+var D609_Pressvariables = {
+    status: 'DB150,INT0',
+};
+D609_Press.initiateConnection({
+    port: 102,
+    host: '10.35.17.40',
+    rack: 0,
+    slot: 1,
+    timeout: 30000,
+    debug: true
+}, D609_Pressconnected);
+function D609_Pressconnected(err) {
+    if (typeof (err) !== "undefined") {
+        console.log(err);
+    }
+    D609_Press.setTranslationCB(function (tag) {
+        return D609_Pressvariables[tag];
+    });
+    D609_Press.addItems(['status',]);
+    D609_Press.readAllItems(D609_PressvaluesReady);
+}
+function D609_PressvaluesReady(err, values) {
+    if (err) { console.log('\x1b[31m', `Plc Bağlantısı Yok yada Okunan Değerlerde Hata Var` ,'\x1b[0m'); return }
+    D609_Press.readAllItems(D609_PressvaluesReady);
+    plcdata.D609Status = values.status;
+}
+function Save609PressData() {
+    fs.readFile(`./pressdata/${GetFileDate(true)}/${GetFileDate()}.json`, null, function (error, data) {
+        if (error) {  console.log(error); }
+        var amdata = JSON.parse(data)
+        let d609status = 0;
+        let d610status = 0;
+        switch (plcdata.D609Status) {
+            case 1:
+                d609status = 10;
+                break;
+            case 2:
+                d609status = 20
+                break;
+            case 3:
+                d609status = 30
+                break;
+            case 4:
+                d609status = 40
+                break;
+            case 5:
+                d609status = 50
+                break;
+            case 6:
+                d609status = 60
+                break;
+            case 7:
+                d609status = 70
+                break;
+            case 8:
+                d609status = 80
+                break;
+            case 9:
+                d609status = 90
+                break;
+            case 10:
+                d609status = 100
+                break;
+            case 11:
+                d609status = 110
+                break;
+            case 12:
+                d609status = 120
+                break;
+            case 13:
+                d609status = 130
+                break;
+            case 14:
+                d609status = 140
+                break;
+            case 15:
+                d609status = 150
+                break;
+            default:
+                break;
+            }
+            switch (plcdata.D610Status) {
+                case 1:
+                    d610status = 10;
+                    break;
+                case 2:
+                    d610status = 20
+                    break;
+                case 3:
+                    d610status = 30
+                    break;
+                case 4:
+                    d610status = 40
+                    break;
+                case 5:
+                    d610status = 50
+                    break;
+                case 6:
+                    d610status = 60
+                    break;
+                case 7:
+                    d610status = 70
+                    break;
+                case 8:
+                    d610status = 80
+                    break;
+                case 9:
+                    d610status = 90
+                    break;
+                case 10:
+                    d610status = 100
+                    break;
+                case 11:
+                    d610status = 110
+                    break;
+                case 12:
+                    d610status = 120
+                    break;
+                case 13:
+                    d610status = 130
+                    break;
+                case 14:
+                    d610status = 140
+                    break;
+                case 15:
+                    d610status = 150
+                    break;
+                default:
+                    break;
+            }
+        
+        amdata.push({
+            time: GetDate(true),
+            d609: d609status,
+            d610: d610status
+        });
+        fs.writeFile(`./pressdata/${GetFileDate(true)}/${GetFileDate()}.json`, JSON.stringify(amdata), err => {
+            if (err) throw err;
+        });
+    });
+}
+
+setInterval(() => {
+    var dir = `./pressdata/${GetFileDate(true)}`;
+    if (!fs.existsSync(dir)){
+        fs.mkdirSync(dir, { recursive: true });
+        console.log('\x1b[32m', `${dir} directory created.` ,'\x1b[0m');
+        fs.readFile(`./pressdata/${GetFileDate(true)}/${GetFileDate()}.json`, null, function (error, data) {
+            if (error) {  
+                fs.appendFile(`./pressdata/${GetFileDate(true)}/${GetFileDate()}.json`, '[]', err => {
+                    if (err) throw err;
+                    console.log('\x1b[32m', `${GetFileDate()}.json File created.` ,'\x1b[0m');
+                    Save609PressData()
+                });
+            }else{
+                Save609PressData()
+            }
+        });
+    }else{
+        fs.readFile(`./pressdata/${GetFileDate(true)}/${GetFileDate()}.json`, null, function (error, data) {
+            if (error) {  
+                fs.appendFile(`./pressdata/${GetFileDate(true)}/${GetFileDate()}.json`, '[]', err => {
+                    if (err) throw err;
+                    console.log('\x1b[32m', `${GetFileDate()}.json File created.` ,'\x1b[0m');
+                    Save609PressData()
+                });
+            }else{
+                Save609PressData()
+            }
+        });
+    }
+} , 60000);
+
+var D610_Press = new nodes7;
+var D610_Pressvariables = {
+    status: 'DB150,INT0',
+};
+D610_Press.initiateConnection({
+    port: 102,
+    host: '10.35.17.50',
+    rack: 0,
+    slot: 1,
+    timeout: 30000,
+    debug: true
+}, D610_Pressconnected);
+function D610_Pressconnected(err) {
+    if (typeof (err) !== "undefined") {
+        console.log(err);
+    }
+    D610_Press.setTranslationCB(function (tag) {
+        return D610_Pressvariables[tag];
+    });
+    D610_Press.addItems(['status',]);
+    D610_Press.readAllItems(D610_PressvaluesReady);
+}
+function D610_PressvaluesReady(err, values) {
+    if (err) { console.log('\x1b[31m', `Plc Bağlantısı Yok yada Okunan Değerlerde Hata Var` ,'\x1b[0m'); return }
+    D610_Press.readAllItems(D610_PressvaluesReady);
+    plcdata.D610Status = values.status;
 }

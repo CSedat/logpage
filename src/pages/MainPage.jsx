@@ -15,6 +15,7 @@ import YKSPage from './YKSPage'
 import HourlySlurry from './HourlySlurry'
 import LabPage from './LabPage'
 import AmbarPump from './AmbarPump'
+import PressData from './PressData'
 
 
 function TabPanel(props) {
@@ -94,6 +95,11 @@ export default function FullWidthTabs() {
                                 <Tab label="Ambar Pompa" key={4} value={4} {...a11yProps(4)} />
                             : ""
                         }
+                        {
+                            user?.user?.roles.find(e => e === 'press') ? 
+                                <Tab label="Press Kayıt" key={5} value={5} {...a11yProps(5)} />
+                            : ""
+                        }
                     </Tabs>
                 </AppBar>
                 <SwipeableViews
@@ -128,6 +134,11 @@ export default function FullWidthTabs() {
                     <TabPanel className=" h-[90.6vh] w-full " value={value} index={4} dir={theme.direction}>
                         <div className=' text-white h-full'>
                             <AmbarPump />
+                        </div>
+                    </TabPanel>
+                    <TabPanel className=" h-[90.6vh] w-full " value={value} index={5} dir={theme.direction}>
+                        <div className=' text-white h-full'>
+                            <PressData />
                         </div>
                     </TabPanel>
                 </SwipeableViews>
