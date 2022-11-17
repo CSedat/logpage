@@ -184,7 +184,7 @@ export default function App() {
                     <p className='bg-gray-500 rounded'>(120-130-140)</p> Boşaltılıyor 
                 </div>
                 <div className=' border border-1 p-1 rounded w-full '>
-                    <p className='bg-gray-500 rounded'>150</p> Döngü Bekleniyor 
+                    <p className='bg-gray-500 rounded'>150</p> Bitti, Döngü Bekleniyor 
                 </div>
             </div>
             <div className='mx-auto text-right w-[23rem] grid grid-cols-6 gap-1 bg-gray-800 rounded'>

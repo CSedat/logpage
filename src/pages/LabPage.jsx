@@ -1,11 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import {UserAuthContext, useContext} from '../contexts/UserAuth'
-
+import { DownloadTableExcel } from 'react-export-table-to-excel';
+import moment from "moment";
 export default function LabPage(){
     const [rows, setRows] = useState([]);
     const {user} = useContext(UserAuthContext)
     const [permission, setPermission] = useState(true);
+    const tableRef = useRef(null);
 
     function RefreshData() {
         axios.get("http://10.35.13.108:8001/api/getlabdata").then((response) => {
@@ -33,7 +35,14 @@ export default function LabPage(){
     return (
         <div className=" mx-auto my-auto h-full w-1/2 ">
             <div className=" overflow-x-hidden w-full max-h-full border border-separate rounded">
-              <table id="veritablo" className=" text-white  ">
+                <DownloadTableExcel
+                    filename={moment().format('DD-MM-YY') + ' Katı Madde Hesabı'}
+                    sheet="CSM"
+                    currentTableRef={tableRef.current}
+                >
+                   <button> Export excel </button>
+                </DownloadTableExcel>
+              <table id="veritablo" className=" text-white" ref={tableRef} >
                 <thead className=" sticky -top-[0.001rem] rounded">
                     <tr>
                         <th className="text-xs font-medium bg-gray-700 text-center border p-1 rounded m-1">Tarih</th>

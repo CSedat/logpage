@@ -74,20 +74,20 @@ const users = [
     {
         id: 2,
         username: "tunahansimsek",
-        password: "Ts159753",
+        password: "1925",
         roles:['pdc', 'yks', 'slurry', 'kmadde', 'ambar', 'press']
     },
     {
         id: 3,
         username: "irfansariyar",
         password: "is1425",
-        roles:['pdc', 'slurry', 'kmadde', 'ambar']
+        roles:['pdc', 'slurry', 'kmadde', 'ambar', 'press']
     },
     {
         id: 4,
         username: "tansukoralay",
         password: "ts1q2w",
-        roles:['pdc', 'slurry', 'kmadde', 'ambar']
+        roles:['pdc', 'slurry', 'kmadde', 'ambar', 'press']
     },
     {
         id: 5,
@@ -113,6 +113,12 @@ const users = [
         password: "ak123456..",
         roles:['pdc', 'slurry', 'kmadde']
     },
+	{
+        id: 9,
+        username: "mehmetkelesoglu",
+        password: "mk123456",
+        roles:['pdc', 'slurry', 'kmadde', 'ambar']
+    	},
 ]
 
 app.listen(appport, () => {
