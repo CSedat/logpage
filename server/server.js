@@ -118,7 +118,13 @@ const users = [
         username: "mehmetkelesoglu",
         password: "mk123456",
         roles:['pdc', 'slurry', 'kmadde', 'ambar']
-    	},
+    },
+    {
+        id: 10,
+        username: "alicanyuzbasi",
+        password: "ac123456",
+        roles:['pdc', 'slurry', 'kmadde', 'ambar']
+    },
 ]
 
 app.listen(appport, () => {
