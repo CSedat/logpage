@@ -29,19 +29,12 @@ export default function App() {
         labels: ['labs'],
         datasets: [
             {
-                label: '609 Durum',
+                label: 'Yoğunluk',
                 data: ['datasets1'],
                 borderColor: 'rgb(255, 99, 132)',
                 backgroundColor: 'rgba(255, 99, 132, 0.5)',
                 tension: 0.5
-            },
-            {
-                label: '610 Durum',
-                data: ['datasets2'],
-                borderColor: 'rgb(53, 162, 235)',
-                backgroundColor: 'rgba(53, 162, 235, 0.5)',
-                tension: 0.5
-            },
+            }
         ]
     })
     const [selectedday, setSelectedday] = useState(moment().format('D'));
@@ -51,36 +44,27 @@ export default function App() {
     const getData = () => {
         let labs = [];
         let datasets1 = [];
-        let datasets2 = [];
-        axios.post('http://10.35.13.108:8001/api/getpressdatafromdate', {
+        axios.post('http://10.35.13.108:8001/api/getdensitydatafromdate', {
             date: `${selectedmon}-${selectedyear}`,
             dateFull: `${selectedday}-${selectedmon}-${selectedyear}`
         }).then(response => {
             let data = response.data;
-
+            console.log(data)
             for (const cdata of data) {
                 const element = cdata;
                 labs.push(element.time);
-                datasets1.push(element.d609);
-                datasets2.push(element.d610);
+                datasets1.push(element.density);
             }
             setChartData({
                 labels: labs,
                 datasets: [
                     {
-                        label: 'D609 Durum',
+                        label: 'Yoğunluk',
                         data: datasets1,
                         borderColor: 'rgb(255, 99, 132)',
                         backgroundColor: 'rgba(255, 99, 132, 0.5)',
                         tension: 0.5
-                    },
-                    {
-                        label: 'D610 Durum',
-                        data: datasets2,
-                        borderColor: 'rgb(53, 162, 235)',
-                        backgroundColor: 'rgba(53, 162, 235, 0.5)',
-                        tension: 0.5
-                    },
+                    }
                 ]
             })
         }).catch(err => {
@@ -94,49 +78,47 @@ export default function App() {
     }, [selectedday, selectedmon, selectedyear]);
     return (
         <div>
-            <div className=' w-full overflow-hidden p-4'>
-                
+            <div className=' h-50 w-full overflow-hidden p-4'>
                 <Line 
-                    style={{height: '60%', width: '80%'}}
+                    style={{height: '80%', width: '80%'}}
                     options={{
                         responsive: true,
                         maintainAspectRatio: false,
                         spanGaps: true,
                         plugins: {
                             title: {
-                              display: true,
-                              text: 'Filtre Press Durum Kayıtları (Dakikalık)',
-                              color: "white"
+                                display: true,
+                                text: 'Tesis Manyetit Yoğunluk Kayıtları (30 Dakikada Bir)',
+                                color: "white"
                             },
                             legend: {
                                 labels: {
-                                  color: "white",
-                                  font: {
-                                    size: 14
-                                  }
+                                    color: "white",
+                                    font: {
+                                        size: 14
+                                    }
                                 }
-                              }
+                            }
                         },
                         interaction: {
-                          intersect: false,
+                            intersect: false,
                         },
                         scales: {
                             x: {
-                              display: true,
-                              title: {
+                                display: true,
+                                title: {
                                     display: true,
-                                    
-                              },
-                              ticks: {
-                                color: "white"
-                              }
+                                },
+                                ticks: {
+                                    color: "white"
+                                }
                             },
                             y: {
                                 suggestedMin: 0,
                                 display: true,
                                 title: {
                                   display: true,
-                                  text: 'Filtre Durum',
+                                  text: '',
                                   color: "white"
                                 },
                                 ticks: {
@@ -153,38 +135,6 @@ export default function App() {
                     data={chartData} 
 
                 />
-            </div>
-            <div className='grid grid-cols-10 text-center items text-[0.65rem] bg-gray-700 rounded p-1 '>
-                <div className=' border border-1 p-1 rounded w-full '>
-                    <p className='bg-gray-500 rounded'>10</p> Ana Piston Geri Çekiliyor 
-                </div>
-                <div className=' border border-1 p-1 rounded w-full '>
-                    <p className='bg-gray-500 rounded'>(20-30)</p> Araba Çalışıyor Açım Yapılıyor 
-                </div>
-                <div className=' border border-1 p-1 rounded w-full '>
-                    <p className='bg-gray-500 rounded'>40</p> Ana Piston Basılıyor 
-                </div>
-                <div className=' border border-1 p-1 rounded w-full '>
-                    <p className='bg-gray-500 rounded'>50</p> Ana Piston Basılıyor 2 
-                </div>
-                <div className=' border border-1 p-1 rounded w-full '>
-                    <p className='bg-gray-500 rounded'>60</p> Press Besleniyor Rampa 1
-                </div>
-                <div className=' border border-1 p-1 rounded w-full '>
-                    <p className='bg-gray-500 rounded'>70</p> Press Besleniyor Rampa 2
-                </div>
-                <div className=' border border-1 p-1 rounded w-full '>
-                    <p className='bg-gray-500 rounded'>80</p> Hava Veriliyor 
-                </div>
-                <div className=' border border-1 p-1 rounded w-full '>
-                    <p className='bg-gray-500 rounded'>(90-100-110)</p> Sıkılıyor 
-                </div>
-                <div className=' border border-1 p-1 rounded w-full '>
-                    <p className='bg-gray-500 rounded'>(120-130-140)</p> Boşaltılıyor 
-                </div>
-                <div className=' border border-1 p-1 rounded w-full '>
-                    <p className='bg-gray-500 rounded'>150</p> Bitti, Döngü Bekleniyor 
-                </div>
             </div>
             <div className='mx-auto text-right w-[23rem] grid grid-cols-6 gap-1 bg-gray-800 rounded'>
                 <label>Gün:</label>

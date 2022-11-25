@@ -11,7 +11,7 @@ export default function LabPage(){
 
     function RefreshData() {
         axios.get("http://10.35.13.108:8001/api/getlabdata").then((response) => {
-            let jsondata = response.data;
+            let jsondata = response.data.slice(0, 120);
             let row = [];
             for (let g = 0; g < jsondata.length; g++) {
                 const element = jsondata[g];

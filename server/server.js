@@ -69,31 +69,31 @@ const users = [
         id: 1,
         username: "sedatcapar",
         password: "ss1q2w",
-        roles:['pdc', 'yks', 'slurry', 'kmadde', 'ambar', 'press']
+        roles:['pdc', 'yks', 'slurry', 'kmadde', 'ambar', 'press', 'density']
     },
     {
         id: 2,
         username: "tunahansimsek",
         password: "1925",
-        roles:['pdc', 'yks', 'slurry', 'kmadde', 'ambar', 'press']
+        roles:['pdc', 'yks', 'slurry', 'kmadde', 'ambar', 'press', 'density']
     },
     {
         id: 3,
         username: "irfansariyar",
         password: "is1425",
-        roles:['pdc', 'slurry', 'kmadde', 'ambar', 'press']
+        roles:['pdc', 'slurry', 'kmadde', 'ambar', 'press', 'density']
     },
     {
         id: 4,
         username: "tansukoralay",
         password: "ts1q2w",
-        roles:['pdc', 'slurry', 'kmadde', 'ambar', 'press']
+        roles:['pdc', 'slurry', 'kmadde', 'ambar', 'press', 'density']
     },
     {
         id: 5,
         username: "kontrolmerkezi",
         password: "Pe123456@",
-        roles:['pdc', 'slurry', 'ambar']
+        roles:['pdc', 'slurry', 'ambar', 'press', 'density']
     },
     {
         id: 6,
@@ -105,7 +105,7 @@ const users = [
         id: 7,
         username: "kaanuzuner",
         password: "ku123456.",
-        roles:['pdc', 'slurry', 'kmadde', 'ambar']
+        roles:['pdc', 'slurry', 'kmadde', 'ambar', 'density']
     },
     {
         id: 8,
@@ -113,11 +113,11 @@ const users = [
         password: "ak123456..",
         roles:['pdc', 'slurry', 'kmadde']
     },
-	{
+    {
         id: 9,
         username: "mehmetkelesoglu",
         password: "mk123456",
-        roles:['pdc', 'slurry', 'kmadde', 'ambar']
+        roles:['pdc', 'slurry', 'kmadde', 'ambar', 'density']
     },
     {
         id: 10,
@@ -230,6 +230,19 @@ app.post('/api/getpressdatafromdate', function (req, res) {
     var dateFull = req.body.dateFull;
     let data = fs.readFileSync(`./pressdata/${date}/${dateFull}.json`);
     res.send(data);
+});
+
+app.post('/api/getdensitydatafromdate', function (req, res) {
+    var date = req.body.date;
+    var dateFull = req.body.dateFull;
+    fs.readFile(`./density/${date}/${dateFull}.json`, null, function (error, data) {
+        if (error) {
+            console.log(error);
+            res.send('error');
+            return
+        }
+        res.send(data);
+    });
 });
 
 app.get('/api/saveslurry', function (req, res) {
@@ -474,10 +487,6 @@ function GetDate(bool) {
     }
 }
 
-
-
-
-
 var nodes7 = require('nodes7');
 const { Console } = require('console');
 var mainPLC = new nodes7;
@@ -490,7 +499,7 @@ var variables = {
     Pac3200: 'DB79,LREAL144',
     MainPLCMBPdc: 'DB69,REAL48.6',
     MainPLCPdc710: 'DB13,REAL20',
-    D328Values: 'DB85,REAL0.6',
+    D328Values: 'DB85,REAL8',
 };
 mainPLC.initiateConnection({
     port: 102,
@@ -527,12 +536,7 @@ function valuesReady(err, values) {
         d710: parseInt(values.MainPLCPdc710.toFixed()),
     }
     plcdata.d328_vals = {
-        voltage: values.D328Values[0].toFixed(2),
-        current: values.D328Values[1].toFixed(2),
-        density: values.D328Values[2].toFixed(2),
-        level: values.D328Values[3].toFixed(),
-        kw: values.D328Values[4].toFixed(),
-        kwh: values.D328Values[5].toFixed(),
+        density: values.D328Values.toFixed(2),
     }
 }
 function valuesWritten(err) {
@@ -900,4 +904,54 @@ function D610_PressvaluesReady(err, values) {
     if (err) { console.log('\x1b[31m', `Plc Bağlantısı Yok yada Okunan Değerlerde Hata Var` ,'\x1b[0m'); return }
     D610_Press.readAllItems(D610_PressvaluesReady);
     plcdata.D610Status = values.status;
+}
+
+
+
+setInterval(() => {
+    var dir = `./density/${GetFileDate(true)}`;
+    var min = parseInt(moment().format('mm'));
+    if (min == 00 || min == 30) {
+        if (!fs.existsSync(dir)){
+            fs.mkdirSync(dir, { recursive: true });
+            console.log('\x1b[32m', `${dir} directory created.` ,'\x1b[0m');
+            fs.readFile(`./density/${GetFileDate(true)}/${GetFileDate()}.json`, null, function (error, data) {
+                if (error) {  
+                    fs.appendFile(`./density/${GetFileDate(true)}/${GetFileDate()}.json`, '[]', err => {
+                        if (err) throw err;
+                        console.log('\x1b[32m', `${GetFileDate()}.json File created.` ,'\x1b[0m');
+                        SaveDensityData()
+                    });
+                }else{
+                    SaveDensityData()
+                }
+            });
+        }else{
+            fs.readFile(`./density/${GetFileDate(true)}/${GetFileDate()}.json`, null, function (error, data) {
+                if (error) {  
+                    fs.appendFile(`./density/${GetFileDate(true)}/${GetFileDate()}.json`, '[]', err => {
+                        if (err) throw err;
+                        console.log('\x1b[32m', `${GetFileDate()}.json File created.` ,'\x1b[0m');
+                        SaveDensityData()
+                    });
+                }else{
+                    SaveDensityData()
+                }
+            });
+        }
+    }
+} , 60000);
+
+function SaveDensityData() {
+    fs.readFile(`./density/${GetFileDate(true)}/${GetFileDate()}.json`, null, function (error, data) {
+        if (error) {  console.log(error); }
+        var densitydata = JSON.parse(data)
+        densitydata.push({
+            time: GetDate(true),
+            density: parseFloat(plcdata.d328_vals.density),
+        });
+        fs.writeFile(`./density/${GetFileDate(true)}/${GetFileDate()}.json`, JSON.stringify(densitydata), err => {
+            if (err) throw err;
+        });
+    });
 }
