@@ -17,6 +17,7 @@ import LabPage from './LabPage'
 import AmbarPump from './AmbarPump'
 import PressData from './PressData'
 import DensityData from './DensityPage'
+import WorksPage from './WorksPage'
 
 
 function TabPanel(props) {
@@ -103,7 +104,12 @@ export default function FullWidthTabs() {
                         }
                         {
                             user?.user?.roles.find(e => e === 'density') ? 
-                                <Tab label="Yoğunluk Kayıt" key={5} value={6} {...a11yProps(6)} />
+                                <Tab label="Yoğunluk Kayıt" key={6} value={6} {...a11yProps(6)} />
+                            : ""
+                        }
+                        {
+                            user?.user?.roles.find(e => e === 'works') ? 
+                                <Tab label="Elektrİk İş Kayıt" key={7} value={7} {...a11yProps(7)} />
                             : ""
                         }
                     </Tabs>
@@ -113,43 +119,48 @@ export default function FullWidthTabs() {
                     index={value}
                     onChangeIndex={handleChangeIndex}
                 >
-                    <TabPanel className=" h-[90.6vh] w-full " value={value} index={0} dir={theme.direction}>
+                    <TabPanel className=" h-[89.4vh] w-full " value={value} index={0} dir={theme.direction}>
                     <div className=' text-white h-full'>
                         <PDCPage/>
                     </div>
                     </TabPanel>
 
-                    <TabPanel className=" h-[90.6vh] w-full " value={value} index={1} dir={theme.direction}>
+                    <TabPanel className=" h-[89.4vh] w-full " value={value} index={1} dir={theme.direction}>
                         <div className=' text-white h-full'>
                             <YKSPage/>
                         </div>
                     </TabPanel>
 
-                    <TabPanel className=" h-[90.6vh] w-full " value={value} index={2} dir={theme.direction}>
+                    <TabPanel className=" h-[89.4vh] w-full " value={value} index={2} dir={theme.direction}>
                         <div className=' text-white h-full'>
                             <HourlySlurry />
                         </div>
                     </TabPanel>
 
-                    <TabPanel className=" h-[90.6vh] w-full " value={value} index={3} dir={theme.direction}>
+                    <TabPanel className=" h-[89.4vh] w-full " value={value} index={3} dir={theme.direction}>
                         <div className=' text-white h-full'>
                             <LabPage />
                         </div>
                     </TabPanel>
 
-                    <TabPanel className=" h-[90.6vh] w-full " value={value} index={4} dir={theme.direction}>
+                    <TabPanel className=" h-[89.4vh] w-full " value={value} index={4} dir={theme.direction}>
                         <div className=' text-white h-full'>
                             <AmbarPump />
                         </div>
                     </TabPanel>
-                    <TabPanel className=" h-[90.6vh] w-full " value={value} index={5} dir={theme.direction}>
+                    <TabPanel className=" h-[89.4vh] w-full " value={value} index={5} dir={theme.direction}>
                         <div className=' text-white h-full'>
                             <PressData />
                         </div>
                     </TabPanel>
-                    <TabPanel className=" h-[90.6vh] w-full " value={value} index={6} dir={theme.direction}>
+                    <TabPanel className=" h-[89.4vh] w-full " value={value} index={6} dir={theme.direction}>
                         <div className=' text-white h-full'>
                             <DensityData />
+                        </div>
+                    </TabPanel>
+                    <TabPanel className=" h-[89.4vh] w-full p-1 " value={value} index={7} dir={theme.direction}>
+                        <div className=' text-white h-full'>
+                            <WorksPage />
                         </div>
                     </TabPanel>
                 </SwipeableViews>

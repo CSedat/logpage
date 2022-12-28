@@ -1,8 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import {UserAuthContext, useContext} from '../contexts/UserAuth'
-import { DownloadTableExcel } from 'react-export-table-to-excel';
-import moment from "moment";
 export default function LabPage(){
     const [rows, setRows] = useState([]);
     const {user} = useContext(UserAuthContext)
@@ -35,13 +33,6 @@ export default function LabPage(){
     return (
         <div className=" mx-auto my-auto h-full w-1/2 ">
             <div className=" overflow-x-hidden w-full max-h-full border border-separate rounded">
-                <DownloadTableExcel
-                    filename={moment().format('DD-MM-YY') + ' Katı Madde Hesabı'}
-                    sheet="CSM"
-                    currentTableRef={tableRef.current}
-                >
-                   <button> Export excel </button>
-                </DownloadTableExcel>
               <table id="veritablo" className=" text-white" ref={tableRef} >
                 <thead className=" sticky -top-[0.001rem] rounded">
                     <tr>
@@ -137,7 +128,6 @@ function NemAnalizi(props) {
             fark: fark,
             saved: true
         }).then((response) => {
-            console.log(response);
             props.refreshdata();
         });
     }

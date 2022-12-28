@@ -41,6 +41,8 @@ export default function App() {
     const [selectedmon, setSelectedmon] = useState(moment().format('M'));
     const [selectedyear, setSelectedyear] = useState(moment().format('Y'));
 
+    const [density, setDensity] = useState(0);
+
     const getData = () => {
         let labs = [];
         let datasets1 = [];
@@ -49,7 +51,6 @@ export default function App() {
             dateFull: `${selectedday}-${selectedmon}-${selectedyear}`
         }).then(response => {
             let data = response.data;
-            console.log(data)
             for (const cdata of data) {
                 const element = cdata;
                 labs.push(element.time);
@@ -71,13 +72,24 @@ export default function App() {
             console.log(err)
         })
     }
+    function RefreshData(){
+        axios.get("http://10.35.13.108:8001/api/getPLCData").then((response) => {
+            let jsondata = response.data;
+            setDensity(jsondata.d328_vals.density);
+        });
+    }
 
     useEffect(() => {
         getData();
+        RefreshData()
+        setInterval(() => {
+            RefreshData()
+        }, 3000);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedday, selectedmon, selectedyear]);
     return (
         <div>
+            <p className=' text-center bg-gray-800 w-48 rounded mx-auto'>Şuanki Yoğunluk: {density}</p>
             <div className=' h-50 w-full overflow-hidden p-4'>
                 <Line 
                     style={{height: '80%', width: '80%'}}
@@ -154,10 +166,6 @@ export default function App() {
                     <option value='2022'>2022</option>
                     <option value='2023'>2023</option>
                 </select>
-
-            </div>
-            <div>
-                {/* <ReactJson src={cData(selectedday, selectedmon)} theme="monokai" /> */}
             </div>
         </div>
     );

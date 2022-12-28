@@ -2,6 +2,8 @@ var http = require('http');
 var static = require('node-static');
 var fileServer = new static.Server('./client');
 var port = process.env.PORT || 8000;
+var nodes7 = require('nodes7');
+
 http.createServer(function (req, res) {
     fileServer.serve(req, res);
     // if (req.url != "/") {
@@ -69,25 +71,25 @@ const users = [
         id: 1,
         username: "sedatcapar",
         password: "ss1q2w",
-        roles:['pdc', 'yks', 'slurry', 'kmadde', 'ambar', 'press', 'density']
+        roles:['pdc', 'yks', 'slurry', 'kmadde', 'ambar', 'press', 'density', 'works', 'elektrik']
     },
     {
         id: 2,
         username: "tunahansimsek",
         password: "1925",
-        roles:['pdc', 'yks', 'slurry', 'kmadde', 'ambar', 'press', 'density']
+        roles:['pdc', 'yks', 'slurry', 'kmadde', 'ambar', 'press', 'density', 'works', 'elektrik']
     },
     {
         id: 3,
         username: "irfansariyar",
-        password: "is1425",
+        password: "sarıkırmızı",
         roles:['pdc', 'slurry', 'kmadde', 'ambar', 'press', 'density']
     },
     {
         id: 4,
         username: "tansukoralay",
         password: "ts1q2w",
-        roles:['pdc', 'slurry', 'kmadde', 'ambar', 'press', 'density']
+        roles:['pdc', 'slurry', 'kmadde', 'ambar', 'press', 'density', 'works']
     },
     {
         id: 5,
@@ -125,16 +127,80 @@ const users = [
         password: "ac123456",
         roles:['pdc', 'slurry', 'kmadde', 'ambar']
     },
+    {
+        id: 11,
+        username: "elektrik",
+        password: "741369",
+        roles:['pdc', 'slurry', 'kmadde', 'ambar', 'press', 'density', 'works', 'elektrik']
+    },
 ]
-
-app.listen(appport, () => {
-    console.log(`${appport} api port started`)
-})
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'static')));
 app.set("view engine", "pug");
+
+var mainPLC = new nodes7;
+mainPLC.initiateConnection({
+    port: 102,
+    host: '10.35.17.10',
+    rack: 0,
+    slot: 1,
+    timeout: 30000,
+    debug: true
+}, mainPLCconnected);
+var ambarPLC = new nodes7;
+var ambarPLCvariables = {
+    status: 'DB2,INT2',
+    seviye: 'DB1,REAL0',
+};
+ambarPLC.initiateConnection({
+    port: 102,
+    host: '10.35.14.184',
+    rack: 0,
+    slot: 1,
+    timeout: 30000,
+    debug: true
+}, ambarPLCconnected);
+var D609_Press = new nodes7;
+var D609_Pressvariables = {
+    status: 'DB150,INT0',
+};
+D609_Press.initiateConnection({
+    port: 102,
+    host: '10.35.17.40',
+    rack: 0,
+    slot: 1,
+    timeout: 30000,
+    debug: true
+}, D609_Pressconnected);
+var crusherPLC = new nodes7;
+var crusherPLCvariables = {
+    crusherkhw: 'MR152',
+    bc1bpdc1: 'DB57,REAL0',
+    bc1bpdc2: 'DB57,REAL18',
+};
+crusherPLC.initiateConnection({
+    port: 102,
+    host: '10.35.17.11',
+    rack: 0,
+    slot: 1,
+    timeout: 30000,
+    debug: true
+}, crusherPLCconnected);
+var D610_Press = new nodes7;
+var D610_Pressvariables = {
+    status: 'DB150,INT0',
+};
+D610_Press.initiateConnection({
+    port: 102,
+    host: '10.35.17.50',
+    rack: 0,
+    slot: 1,
+    timeout: 30000,
+    debug: true
+}, D610_Pressconnected);
+
 
 app.post("/auth", function (req, res) {
     let data = req.body;
@@ -168,6 +234,10 @@ app.get('/api/getambardata', function (req, res) {
 
 app.get('/api/getlabdata', function (req, res) {
     res.sendFile('./laboratuvar/data.json', { root: __dirname });
+});
+
+app.get('/api/getworksdata', function (req, res) {
+    res.sendFile('./works/works.json', { root: __dirname });
 });
 
 app.post('/api/labdatasavenem', function (req, res) {
@@ -487,12 +557,7 @@ function GetDate(bool) {
     }
 }
 
-var nodes7 = require('nodes7');
-const { Console } = require('console');
-var mainPLC = new nodes7;
-var doneReading = false;
-var doneWriting = false;
-var variables = {
+var mainPLCvariables = {
     m3Slurry: 'DB80,REAL0',
     SlurryTotal: 'DB80,REAL16',
     HourlySlurry: 'DB80,REAL24',
@@ -501,20 +566,13 @@ var variables = {
     MainPLCPdc710: 'DB13,REAL20',
     D328Values: 'DB85,REAL8',
 };
-mainPLC.initiateConnection({
-    port: 102,
-    host: '10.35.17.10',
-    rack: 0,
-    slot: 1,
-    timeout: 30000,
-    debug: true
-}, connected);
-function connected(err) {
+
+function mainPLCconnected(err) {
     if (typeof (err) !== "undefined") {
         console.log(err);
     }
     mainPLC.setTranslationCB(function (tag) {
-        return variables[tag];
+        return mainPLCvariables[tag];
     });
     mainPLC.addItems(['m3Slurry', 'HourlySlurry', 'SlurryTotal', 'Pac3200', 'MainPLCMBPdc', 'MainPLCPdc710', 'D328Values']);
     mainPLC.readAllItems(valuesReady);
@@ -539,28 +597,11 @@ function valuesReady(err, values) {
         density: values.D328Values.toFixed(2),
     }
 }
-function valuesWritten(err) {
-    if (err) { console.log("YAZILAN DEĞERLERDE HATA VAR"); }
-    console.log("Yazıldı.");
-    doneWriting = true;
-    if (doneReading) {  }
-}
+
 app.get('/api/getPLCData', function (req, res) {
     res.send(plcdata);
 });
-var ambarPLC = new nodes7;
-var ambarPLCvariables = {
-    status: 'DB2,INT2',
-    seviye: 'DB1,REAL0',
-};
-ambarPLC.initiateConnection({
-    port: 102,
-    host: '10.35.14.184',
-    rack: 0,
-    slot: 1,
-    timeout: 30000,
-    debug: true
-}, ambarPLCconnected);
+
 function ambarPLCconnected(err) {
     if (typeof (err) !== "undefined") {
         console.log(err);
@@ -578,32 +619,7 @@ function ambarPLCvaluesReady(err, values) {
     plcdata.ambarstatus = values.status;
     plcdata.ambarseviye = values.seviye;
 }
-// setInterval(() => {
-//     fs.readFile('./ambardata.json', null, function (error, data) {
-//         if (error) {  console.log(error); }
-//         var amdata = JSON.parse(data)
-//         let status = 0;
-//         if (plcdata.ambarstatus === 1) {
-//             status = 10;
-//         } else if (plcdata.ambarstatus === 2){
-//             status = 20;
-//         } else if (plcdata.ambarstatus === 3){
-//             status = 30;
-//         } else if (plcdata.ambarstatus === 4){
-//             status = 40;
-//         } else {
-//             status = 0;
-//         }
-//         amdata.push({
-//             time: GetDate(true),
-//             status: status,
-//             seviye: plcdata.ambarseviye,
-//         });
-//         fs.writeFile('./ambardata.json', JSON.stringify(amdata), err => {
-//             if (err) throw err;
-//         });
-//     });
-// }, 60000);
+
 function GetFileDate(bb) {
     var today = new Date();
     if(bb){
@@ -670,20 +686,7 @@ setInterval(() => {
         });
     }
 } , 60000);
-var crusherPLC = new nodes7;
-var crusherPLCvariables = {
-    crusherkhw: 'MR152',
-    bc1bpdc1: 'DB57,REAL0',
-    bc1bpdc2: 'DB57,REAL18',
-};
-crusherPLC.initiateConnection({
-    port: 102,
-    host: '10.35.17.11',
-    rack: 0,
-    slot: 1,
-    timeout: 30000,
-    debug: true
-}, crusherPLCconnected);
+
 function crusherPLCconnected(err) {
     if (typeof (err) !== "undefined") {
         console.log(err);
@@ -704,18 +707,7 @@ function crusherPLCvaluesReady(err, values) {
     };
 }
 
-var D609_Press = new nodes7;
-var D609_Pressvariables = {
-    status: 'DB150,INT0',
-};
-D609_Press.initiateConnection({
-    port: 102,
-    host: '10.35.17.40',
-    rack: 0,
-    slot: 1,
-    timeout: 30000,
-    debug: true
-}, D609_Pressconnected);
+
 function D609_Pressconnected(err) {
     if (typeof (err) !== "undefined") {
         console.log(err);
@@ -785,56 +777,56 @@ function Save609PressData() {
                 break;
             default:
                 break;
-            }
-            switch (plcdata.D610Status) {
-                case 1:
-                    d610status = 10;
-                    break;
-                case 2:
-                    d610status = 20
-                    break;
-                case 3:
-                    d610status = 30
-                    break;
-                case 4:
-                    d610status = 40
-                    break;
-                case 5:
-                    d610status = 50
-                    break;
-                case 6:
-                    d610status = 60
-                    break;
-                case 7:
-                    d610status = 70
-                    break;
-                case 8:
-                    d610status = 80
-                    break;
-                case 9:
-                    d610status = 90
-                    break;
-                case 10:
-                    d610status = 100
-                    break;
-                case 11:
-                    d610status = 110
-                    break;
-                case 12:
-                    d610status = 120
-                    break;
-                case 13:
-                    d610status = 130
-                    break;
-                case 14:
-                    d610status = 140
-                    break;
-                case 15:
-                    d610status = 150
-                    break;
-                default:
-                    break;
-            }
+        }
+        switch (plcdata.D610Status) {
+            case 1:
+                d610status = 10;
+                break;
+            case 2:
+                d610status = 20
+                break;
+            case 3:
+                d610status = 30
+                break;
+            case 4:
+                d610status = 40
+                break;
+            case 5:
+                d610status = 50
+                break;
+            case 6:
+                d610status = 60
+                break;
+            case 7:
+                d610status = 70
+                break;
+            case 8:
+                d610status = 80
+                break;
+            case 9:
+                d610status = 90
+                break;
+            case 10:
+                d610status = 100
+                break;
+            case 11:
+                d610status = 110
+                break;
+            case 12:
+                d610status = 120
+                break;
+            case 13:
+                d610status = 130
+                break;
+            case 14:
+                d610status = 140
+                break;
+            case 15:
+                d610status = 150
+                break;
+            default:
+                break;
+        }
         
         amdata.push({
             time: GetDate(true),
@@ -878,18 +870,7 @@ setInterval(() => {
     }
 } , 60000);
 
-var D610_Press = new nodes7;
-var D610_Pressvariables = {
-    status: 'DB150,INT0',
-};
-D610_Press.initiateConnection({
-    port: 102,
-    host: '10.35.17.50',
-    rack: 0,
-    slot: 1,
-    timeout: 30000,
-    debug: true
-}, D610_Pressconnected);
+
 function D610_Pressconnected(err) {
     if (typeof (err) !== "undefined") {
         console.log(err);
@@ -955,3 +936,92 @@ function SaveDensityData() {
         });
     });
 }
+
+setInterval(() => {
+    var min = parseInt(moment().format('mm'));
+    var hour = parseInt(moment().format('HH'));
+    var key = moment().format('DD-MM-YYYY')
+    if (hour == 00 && min == 00 || hour == 08 && min == 00 || hour == 16 && min == 00) {
+        fs.readFile('./works/works.json', null, function (error, data) {
+            if (error) { console.log(error); }
+            var jdata = JSON.parse(data)
+        
+            jdata.unshift({
+                data: {
+                    date: key,
+                    vardiya: hour >= 00 && hour <= 7 ? 'V1' : hour >= 8 && hour <= 15 ? 'V2' : hour >= 16 && hour <= 23 ? 'V3': null,
+                    names: [],
+                    works: [],
+                }
+            });
+            
+            fs.writeFile('./works/works.json', JSON.stringify(jdata), err => {
+                if (err) throw err;
+                console.log(`${key} iş oluşturuldu!`);
+            });
+        });
+    }
+} , 5000);
+
+app.post('/api/savework', function (req, res) {
+    let adata = req.body
+    let date = req.body.date
+    let vardiya = req.body.vardiya
+    fs.readFile('./works/works.json', null, function (error, data) {
+        if (error) {  console.log(error); }
+        var jdata = JSON.parse(data)
+
+        for (let j = 0; j < jdata.length; j++) {
+            const e = jdata[j];
+            if (e.data.date == date) {
+                if (e.data.vardiya == vardiya) {
+                    e.data.names = adata.data.names
+
+                    e.data.works.unshift({
+                        sure: Number(adata.data.sure),
+                        tip: adata.data.tip,
+                        work: adata.data.work
+                    })
+                    fs.writeFile('./works/works.json', JSON.stringify(jdata), err => {
+                        if (err) throw err;
+                        console.log(`${adata.data.work} iş kaydedildi!`);
+                    });
+                }
+            }
+        }
+    });
+    res.send('ok')
+});
+
+app.post('/api/deletework', function (req, res) {
+    let row = req.body.row
+    let work = req.body.work
+
+    fs.readFile('./works/works.json', null, function (error, data) {
+        if (error) {  console.log(error); }
+        var jdata = JSON.parse(data)
+
+        for (let j = 0; j < jdata.length; j++) {
+            const e = jdata[j];
+            if (e.data.date == row.data.date) {
+                if (e.data.vardiya == row.data.vardiya) {
+                    for (let v = 0; v < e.data.works.length; v++) {
+                        const element = e.data.works[v];
+                        if(element.work == work.work){
+                            e.data.works.splice(v, 1)
+                        }
+                    }
+                }
+            }
+        }
+        fs.writeFile('./works/works.json', JSON.stringify(jdata), err => {
+            if (err) throw err;
+            console.log(`${work.work} iş silindi!`);
+        });
+    });
+    res.send('ok')
+});
+
+app.listen(appport, () => {
+    console.log(`${appport} api port started`)
+})
