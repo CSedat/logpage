@@ -57,6 +57,21 @@ var plcdata = {
     },
     D609Status: 0,
     D610Status: 0,
+    Silolar: {
+        rom: 0,
+        ceviz: 0,
+        findik: 0,
+        toz: 0,
+        araurun: 0,
+    }
+}
+
+var plcConnection = {
+    maincpu: true,
+    d609cpu: true,
+    d610cpu: true,
+    ambarcpu: true,
+    crushercpu: true,
 }
 
 
@@ -82,20 +97,20 @@ const users = [
     {
         id: 3,
         username: "irfansariyar",
-        password: "sarıkırmızı",
-        roles:['pdc', 'slurry', 'kmadde', 'ambar', 'press', 'density']
+        password: "özürdilerimtunahan",
+        roles:['pdc', 'yks', 'slurry', 'kmadde', 'ambar', 'press', 'density', 'works']
     },
     {
         id: 4,
         username: "tansukoralay",
         password: "ts1q2w",
-        roles:['pdc', 'slurry', 'kmadde', 'ambar', 'press', 'density', 'works']
+        roles:['pdc', 'yks', 'slurry', 'kmadde', 'ambar', 'press', 'density', 'works']
     },
     {
         id: 5,
         username: "kontrolmerkezi",
         password: "Pe123456@",
-        roles:['pdc', 'slurry', 'ambar', 'press', 'density']
+        roles:['pdc', 'yks', 'slurry', 'ambar', 'press', 'density']
     },
     {
         id: 6,
@@ -107,7 +122,7 @@ const users = [
         id: 7,
         username: "kaanuzuner",
         password: "ku123456.",
-        roles:['pdc', 'slurry', 'kmadde', 'ambar', 'density']
+        roles:['pdc', 'yks', 'slurry', 'kmadde', 'ambar', 'density']
     },
     {
         id: 8,
@@ -125,14 +140,20 @@ const users = [
         id: 10,
         username: "alicanyuzbasi",
         password: "ac123456",
-        roles:['pdc', 'slurry', 'kmadde', 'ambar']
+        roles:['pdc', 'yks', 'slurry', 'kmadde', 'ambar']
     },
     {
         id: 11,
         username: "elektrik",
         password: "741369",
-        roles:['pdc', 'slurry', 'kmadde', 'ambar', 'press', 'density', 'works', 'elektrik']
+        roles:['pdc', 'yks', 'slurry', 'kmadde', 'ambar', 'press', 'density', 'works', 'elektrik']
     },
+	{
+        id: 11,
+        username: "mehmetgec",
+        password: "mg123456.",
+        roles:['pdc', 'yks', 'slurry', 'kmadde', 'ambar', 'works']
+    	},
 ]
 
 app.use(express.json());
@@ -146,7 +167,7 @@ mainPLC.initiateConnection({
     host: '10.35.17.10',
     rack: 0,
     slot: 1,
-    timeout: 30000,
+    timeout: 3000,
     debug: true
 }, mainPLCconnected);
 var ambarPLC = new nodes7;
@@ -159,7 +180,7 @@ ambarPLC.initiateConnection({
     host: '10.35.14.184',
     rack: 0,
     slot: 1,
-    timeout: 30000,
+    timeout: 3000,
     debug: true
 }, ambarPLCconnected);
 var D609_Press = new nodes7;
@@ -171,7 +192,7 @@ D609_Press.initiateConnection({
     host: '10.35.17.40',
     rack: 0,
     slot: 1,
-    timeout: 30000,
+    timeout: 3000,
     debug: true
 }, D609_Pressconnected);
 var crusherPLC = new nodes7;
@@ -185,7 +206,7 @@ crusherPLC.initiateConnection({
     host: '10.35.17.11',
     rack: 0,
     slot: 1,
-    timeout: 30000,
+    timeout: 3000,
     debug: true
 }, crusherPLCconnected);
 var D610_Press = new nodes7;
@@ -197,7 +218,7 @@ D610_Press.initiateConnection({
     host: '10.35.17.50',
     rack: 0,
     slot: 1,
-    timeout: 30000,
+    timeout: 3000,
     debug: true
 }, D610_Pressconnected);
 
@@ -565,36 +586,47 @@ var mainPLCvariables = {
     MainPLCMBPdc: 'DB69,REAL48.6',
     MainPLCPdc710: 'DB13,REAL20',
     D328Values: 'DB85,REAL8',
+    Silolar: 'DB88,INT0.5',
 };
 
 function mainPLCconnected(err) {
     if (typeof (err) !== "undefined") {
-        console.log(err);
+        console.log('\x1b[31m', `Main PLC bağlantısı kurulamadı` ,'\x1b[0m');
+        plcConnection.maincpu = false;
     }
     mainPLC.setTranslationCB(function (tag) {
         return mainPLCvariables[tag];
     });
-    mainPLC.addItems(['m3Slurry', 'HourlySlurry', 'SlurryTotal', 'Pac3200', 'MainPLCMBPdc', 'MainPLCPdc710', 'D328Values']);
+    mainPLC.addItems(['m3Slurry', 'HourlySlurry', 'SlurryTotal', 'Pac3200', 'MainPLCMBPdc', 'MainPLCPdc710', 'D328Values', 'Silolar']);
     mainPLC.readAllItems(valuesReady);
 }
 function valuesReady(err, values) {
-    if (err) { console.log('\x1b[31m', `Plc Bağlantısı Yok yada Okunan Değerlerde Hata Var` ,'\x1b[0m'); return }
-    mainPLC.readAllItems(valuesReady);
-    plcdata.slurrym3 = parseInt(values.m3Slurry.toFixed(2));
-    plcdata.slurryhourly = values.HourlySlurry;
-    plcdata.slurrytotal = parseInt(values.SlurryTotal.toFixed(2));
-    plcdata.lavvarkwh = parseInt(values.Pac3200.toFixed());
-    plcdata.mainplcpdc = {
-        d301_1: parseInt(values.MainPLCMBPdc[0].toFixed()),
-        d301_2: parseInt(values.MainPLCMBPdc[1].toFixed()),
-        d701: parseInt(values.MainPLCMBPdc[2].toFixed()),
-        d705: parseInt(values.MainPLCMBPdc[3].toFixed()),
-        d706: parseInt(values.MainPLCMBPdc[4].toFixed()),
-        d707: parseInt(values.MainPLCMBPdc[5].toFixed()),
-        d710: parseInt(values.MainPLCPdc710.toFixed()),
-    }
-    plcdata.d328_vals = {
-        density: values.D328Values.toFixed(2),
+    if (err) { console.log('\x1b[31m', `s7-1500 Plc Bağlantısı Yok yada Okunan Değerlerde Hata Var` ,'\x1b[0m'); plcConnection.maincpu = false;}else{plcConnection.maincpu = true;}
+    if(plcConnection.maincpu == true){
+        mainPLC.readAllItems(valuesReady);
+        plcdata.slurrym3 = parseInt(values.m3Slurry.toFixed(2));
+        plcdata.slurryhourly = values.HourlySlurry;
+        plcdata.slurrytotal = parseInt(values.SlurryTotal.toFixed(2));
+        plcdata.lavvarkwh = parseInt(values.Pac3200.toFixed());
+        plcdata.mainplcpdc = {
+            d301_1: parseInt(values.MainPLCMBPdc[0].toFixed()),
+            d301_2: parseInt(values.MainPLCMBPdc[1].toFixed()),
+            d701: parseInt(values.MainPLCMBPdc[2].toFixed()),
+            d705: parseInt(values.MainPLCMBPdc[3].toFixed()),
+            d706: parseInt(values.MainPLCMBPdc[4].toFixed()),
+            d707: parseInt(values.MainPLCMBPdc[5].toFixed()),
+            d710: parseInt(values.MainPLCPdc710.toFixed()),
+        }
+        plcdata.d328_vals = {
+            density: values.D328Values.toFixed(2),
+        }
+        plcdata.Silolar = {
+            rom: values.Silolar[0],
+            ceviz: values.Silolar[1],
+            findik: values.Silolar[2],
+            toz: values.Silolar[3],
+            araurun: values.Silolar[4]
+        }
     }
 }
 
@@ -602,10 +634,14 @@ app.get('/api/getPLCData', function (req, res) {
     res.send(plcdata);
 });
 
+app.get('/api/getPLCConnections', function (req, res) {
+    res.send(plcConnection);
+});
+
 function ambarPLCconnected(err) {
     if (typeof (err) !== "undefined") {
-        console.log(err);
-
+        console.log('\x1b[31m', `Ambar PLC bağlantısı kurulamadı` ,'\x1b[0m');
+        plcConnection.ambarcpu = false;
     }
     ambarPLC.setTranslationCB(function (tag) {
         return ambarPLCvariables[tag];
@@ -614,10 +650,12 @@ function ambarPLCconnected(err) {
     ambarPLC.readAllItems(ambarPLCvaluesReady);
 }
 function ambarPLCvaluesReady(err, values) {
-    if (err) { console.log('\x1b[31m', `Plc Bağlantısı Yok yada Okunan Değerlerde Hata Var` ,'\x1b[0m'); return }
-    ambarPLC.readAllItems(ambarPLCvaluesReady);
-    plcdata.ambarstatus = values.status;
-    plcdata.ambarseviye = values.seviye;
+    if (err) { console.log('\x1b[31m', `Ambar Plc Bağlantısı Yok yada Okunan Değerlerde Hata Var` ,'\x1b[0m'); plcConnection.ambarcpu = false; return }else{plcConnection.ambarcpu = true;}
+    if(plcConnection.ambarcpu == true){
+        ambarPLC.readAllItems(ambarPLCvaluesReady);
+        plcdata.ambarstatus = values.status;
+        plcdata.ambarseviye = values.seviye;
+    }
 }
 
 function GetFileDate(bb) {
@@ -689,7 +727,8 @@ setInterval(() => {
 
 function crusherPLCconnected(err) {
     if (typeof (err) !== "undefined") {
-        console.log(err);
+        console.log('\x1b[31m', `Crusher PLC bağlantısı kurulamadı` ,'\x1b[0m');
+        plcConnection.crushercpu = false;
     }
     crusherPLC.setTranslationCB(function (tag) {
         return crusherPLCvariables[tag];
@@ -698,19 +737,22 @@ function crusherPLCconnected(err) {
     crusherPLC.readAllItems(crusherPLCvaluesReady);
 }
 function crusherPLCvaluesReady(err, values) {
-    if (err) { console.log('\x1b[31m', `Plc Bağlantısı Yok yada Okunan Değerlerde Hata Var` ,'\x1b[0m'); return }
-    crusherPLC.readAllItems(crusherPLCvaluesReady);
-    plcdata.crusherkwh = parseInt(values.crusherkhw.toFixed());
-    plcdata.crusherpdc = {
-        bc1b_1: parseInt(values.bc1bpdc1.toFixed()),
-        bc1b_2: parseInt(values.bc1bpdc2.toFixed()),
-    };
+    if (err) { console.log('\x1b[31m', `Kırıcı Plc Bağlantısı Yok yada Okunan Değerlerde Hata Var` ,'\x1b[0m'); plcConnection.crushercpu = false; return crusherPLCvaluesReady }else{plcConnection.crushercpu = true;}
+    if(plcConnection.crushercpu == true){
+        crusherPLC.readAllItems(crusherPLCvaluesReady);
+        plcdata.crusherkwh = parseInt(values.crusherkhw.toFixed());
+        plcdata.crusherpdc = {
+            bc1b_1: parseInt(values.bc1bpdc1.toFixed()),
+            bc1b_2: parseInt(values.bc1bpdc2.toFixed()),
+        };
+    }
 }
 
 
 function D609_Pressconnected(err) {
     if (typeof (err) !== "undefined") {
-        console.log(err);
+        console.log('\x1b[31m', `D609 PLC bağlantısı kurulamadı` ,'\x1b[0m');
+        plcConnection.d609cpu = false;
     }
     D609_Press.setTranslationCB(function (tag) {
         return D609_Pressvariables[tag];
@@ -719,9 +761,11 @@ function D609_Pressconnected(err) {
     D609_Press.readAllItems(D609_PressvaluesReady);
 }
 function D609_PressvaluesReady(err, values) {
-    if (err) { console.log('\x1b[31m', `Plc Bağlantısı Yok yada Okunan Değerlerde Hata Var` ,'\x1b[0m'); return }
-    D609_Press.readAllItems(D609_PressvaluesReady);
-    plcdata.D609Status = values.status;
+    if (err) { console.log('\x1b[31m', `D609 Plc Bağlantısı Yok yada Okunan Değerlerde Hata Var` ,'\x1b[0m'); plcConnection.d609cpu = false;}else{plcConnection.d609cpu = true;}
+    if(plcConnection.d609cpu == true){
+        D609_Press.readAllItems(D609_PressvaluesReady);
+        plcdata.D609Status = values.status;
+    }
 }
 function Save609PressData() {
     fs.readFile(`./pressdata/${GetFileDate(true)}/${GetFileDate()}.json`, null, function (error, data) {
@@ -873,7 +917,8 @@ setInterval(() => {
 
 function D610_Pressconnected(err) {
     if (typeof (err) !== "undefined") {
-        console.log(err);
+        console.log('\x1b[31m', `D610 PLC bağlantısı kurulamadı` ,'\x1b[0m');
+        plcConnection.d610cpu = false;
     }
     D610_Press.setTranslationCB(function (tag) {
         return D610_Pressvariables[tag];
@@ -882,9 +927,11 @@ function D610_Pressconnected(err) {
     D610_Press.readAllItems(D610_PressvaluesReady);
 }
 function D610_PressvaluesReady(err, values) {
-    if (err) { console.log('\x1b[31m', `Plc Bağlantısı Yok yada Okunan Değerlerde Hata Var` ,'\x1b[0m'); return }
-    D610_Press.readAllItems(D610_PressvaluesReady);
-    plcdata.D610Status = values.status;
+    if (err) { console.log('\x1b[31m', `D610 Plc Bağlantısı Yok yada Okunan Değerlerde Hata Var` ,'\x1b[0m'); plcConnection.d610cpu = false;}else{plcConnection.d610cpu = true;}
+    if(plcConnection.d610cpu == true){
+        D610_Press.readAllItems(D610_PressvaluesReady);
+        plcdata.D610Status = values.status;
+    }
 }
 
 
@@ -961,7 +1008,7 @@ setInterval(() => {
             });
         });
     }
-} , 5000);
+} , 60000);
 
 app.post('/api/savework', function (req, res) {
     let adata = req.body

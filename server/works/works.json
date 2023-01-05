@@ -1,16 +1,26 @@
 [
     {
         "data": {
+            "date": "28-12-2022",
+            "vardiya": "V3",
+            "names": [],
+            "works": []
+        }
+    },
+    {
+        "data": {
             "date": "27-12-2022",
             "vardiya": "V3",
             "names": [
-                "İrfan YALÇIN"
+                "Taner KARA",
+                "Sedat ÇAPAR",
+                "Mehmet CANBAZ"
             ],
             "works": [
                 {
                     "sure": 1,
-                    "tip": null,
-                    "work": "ww"
+                    "tip": "Arıza",
+                    "work": "deneme"
                 }
             ]
         }
@@ -20,14 +30,14 @@
             "date": "27-12-2022",
             "vardiya": "V2",
             "names": [
-                "Hasret ÇELİKER",
-                "Berkan GARGILI"
+                "Taner KARA",
+                "Hasret ÇELİKER"
             ],
             "works": [
                 {
                     "sure": 1,
-                    "tip": null,
-                    "work": "ss"
+                    "tip": "Geliştirme",
+                    "work": "deneme 3"
                 }
             ]
         }
@@ -37,14 +47,14 @@
             "date": "27-12-2022",
             "vardiya": "V1",
             "names": [
-                "İrfan YALÇIN",
-                "Mehmet CANBAZ"
+                "Berkan GARGILI",
+                "İrfan YALÇIN"
             ],
             "works": [
                 {
                     "sure": 1,
-                    "tip": null,
-                    "work": "dd"
+                    "tip": "Bakım",
+                    "work": "deneme 5"
                 }
             ]
         }

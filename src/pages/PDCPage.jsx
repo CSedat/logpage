@@ -1,7 +1,12 @@
 import { useState, useEffect } from "react";
 import { DataGrid, GridToolbarContainer, GridToolbarExport } from "@mui/x-data-grid";
+import PropTypes from 'prop-types';
+import CircularProgress from '@mui/material/CircularProgress';
+import Typography from '@mui/material/Typography';
+
 import axios from "axios";
 import Box from '@mui/material/Box';
+import tank from '../assets/tank.png';
 
 const columns = [
     { align: 'center', headerAlign: 'center', flex: true, field: 'time', headerName: 'Tarih' }, 
@@ -32,6 +37,13 @@ export default function DataGridDemo() {
     const [d706, setD706] = useState(0);
     const [d707, setD707] = useState(0);
     const [d710, setD710] = useState(0);
+
+    const [romsev, setRomSev] = useState(10);
+    const [cevizsev, setCevizSev] = useState(10);
+    const [findiksev, setFindikSev] = useState(10);
+    const [tozsev, setTozSev] = useState(10);
+    const [araurunsev, setAraurunSev] = useState(10);
+
     function RefreshData() {
         axios.get("http://10.35.13.108:8001/api/getpdcdata").then((response) => {
             let jsondata = response.data;
@@ -58,6 +70,11 @@ export default function DataGridDemo() {
             setD706(jsondata.mainplcpdc.d706);
             setD707(jsondata.mainplcpdc.d707);
             setD710(jsondata.mainplcpdc.d710);
+            setRomSev(jsondata.Silolar.rom);
+            setCevizSev(jsondata.Silolar.ceviz)
+            setFindikSev(jsondata.Silolar.findik)
+            setTozSev(jsondata.Silolar.toz)
+            setAraurunSev(jsondata.Silolar.araurun)
         });
     }
 
@@ -88,57 +105,114 @@ export default function DataGridDemo() {
         );
     }
   return (
-    <div className=" h-full w-full p-6">
+    <div >
+        <div className=" h-[75vh] w-full p-6">
+            <Box
+            sx={{
+                height: '100%',
+                width: '100%',
+                '& .dark': {
+                backgroundColor: '#1f2937',
+                color: 'white',
+                borderRadius: 2
+                }
+            }}
+            >
+                <DataGrid
+                    rows={rows}
+                    columns={columns}
+                    rowHeight={35}
+                    headerHeight={35}
+                    initialState={{
+                        pagination: {
+                        pageSize: 30,
+                        },
+                    }}
+                    components={{
+                        Toolbar: CustomToolbar,
+                    }}
+                    rowsPerPageOptions={[30, 50, 100]}
+                    // getCellClassName={(params) => {
+                    //     if (params.field === 'vardiya' || params.value == null) {
+                    //         if (params.row.vardiya === 'Toplam') {
+                    //             return 'dark';
+                    //         }
+                    //     }
+                    //     return '';
+                    // }}
+                    sx={{
+                        color: '#ffffff',
+                        // backgroundColor: '#1d1d1d',
+                        boxShadow: 4,
+                        border: 1,
+                        borderColor: '#ffffff',
+                        '& .MuiDataGrid-cell:hover': {
+                        color: 'yellow',
+                        }
+                    }}
 
-        <Box
-          sx={{
-            height: '100%',
-            width: '100%',
-            '& .dark': {
-              backgroundColor: '#1f2937',
-              color: 'white',
-              borderRadius: 2
-            }
-          }}
-        >
-            <DataGrid
-                rows={rows}
-                columns={columns}
-                rowHeight={35}
-                headerHeight={35}
-                initialState={{
-                    pagination: {
-                      pageSize: 30,
-                    },
-                }}
-                components={{
-                    Toolbar: CustomToolbar,
-                }}
-                rowsPerPageOptions={[30, 50, 100]}
-                // getCellClassName={(params) => {
-                //     if (params.field === 'vardiya' || params.value == null) {
-                //         if (params.row.vardiya === 'Toplam') {
-                //             return 'dark';
-                //         }
-                //     }
-                //     return '';
-                // }}
-                sx={{
-                    color: '#ffffff',
-                    // backgroundColor: '#1d1d1d',
-                    boxShadow: 4,
-                    border: 1,
-                    borderColor: '#ffffff',
-                    '& .MuiDataGrid-cell:hover': {
-                    color: 'yellow',
-                    }
-                }}
-
-                disableSelectionOnClick
-                experimentalFeatures={{ newEditingApi: true }}
-            />
-        </Box>
+                    disableSelectionOnClick
+                    experimentalFeatures={{ newEditingApi: true }}
+                />
+            </Box>
+        </div>
+        <div className="bg-sky-600 rounded border h-[10vh] w-1/2 mx-auto">
+            <div className=" grid grid-cols-5 w-full h-full ">
+                    <div className=" relative text-center ">
+                        <p className=" text-xs">Rom Silo</p>
+                        <CircularProgressWithLabel className="z-10 mx-auto my-4" value={romsev} />
+                        <img className=" w-[7vh] h-[75px] my-[-7.5vh] mx-auto  z-0" src={tank} alt="Rom Silo" />
+                    </div>
+                    <div className=" relative text-center ">
+                        <p className=" text-xs">Ceviz</p>
+                        <CircularProgressWithLabel className="z-10 mx-auto my-4" value={cevizsev} />
+                        <img className=" w-[7vh] h-[75px] my-[-7.5vh] mx-auto  z-0" src={tank} alt="Ceviz" />
+                    </div>
+                    <div className=" relative text-center ">
+                        <p className=" text-xs">Fındık</p>
+                        <CircularProgressWithLabel className="z-10 mx-auto my-4" value={findiksev} />
+                        <img className=" w-[7vh] h-[75px] my-[-7.5vh] mx-auto  z-0" src={tank} alt="Fındık" />
+                    </div>
+                    <div className=" relative text-center ">
+                        <p className=" text-xs">Toz</p>
+                        <CircularProgressWithLabel className="z-10 mx-auto my-4" value={tozsev} />
+                        <img className=" w-[7vh] h-[75px] my-[-7.5vh] mx-auto  z-0" src={tank} alt="Toz" />
+                    </div>
+                    <div className=" relative text-center ">
+                        <p className=" text-xs">Araürün</p>
+                        <CircularProgressWithLabel className="z-10 mx-auto my-4" value={araurunsev} />
+                        <img className=" w-[7vh] h-[75px] my-[-7.5vh] mx-auto  z-0" src={tank} alt="Araürün" />
+                    </div>
+            </div>
+        </div>
     </div>
   );
 }
 
+function CircularProgressWithLabel(props) {
+    return (
+      <Box sx={{ position: 'relative', display: 'inline-flex' }}>
+        <CircularProgress variant="determinate" {...props} />
+        <Box
+          sx={{
+            top: 0,
+            left: 0,
+            bottom: 0,
+            right: 0,
+            position: 'absolute',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'white',
+          }}
+        >
+          <Typography variant="caption" component="div" color="text.white">
+            {`${Math.round(props.value)}%`}
+          </Typography>
+        </Box>
+      </Box>
+    );
+}
+CircularProgressWithLabel.propTypes = {
+    value: PropTypes.number.isRequired,
+};
