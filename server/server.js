@@ -32,6 +32,7 @@ var plcdata = {
     slurrytotal: 0,
     ambarstatus: 0,
     ambarseviye: 0,
+    ambaramper: 0,
     lavvarkwh: 0,
     crusherkwh: 0,
     crusherpdc:{
@@ -116,7 +117,7 @@ const users = [
         id: 6,
         username: "laboratuvar",
         password: "7452",
-        roles:['pdc', 'slurry', 'kmadde']
+        roles:['pdc', 'slurry', 'kmadde', 'yks', 'density']
     },
     {
         id: 7,
@@ -174,6 +175,7 @@ var ambarPLC = new nodes7;
 var ambarPLCvariables = {
     status: 'DB2,INT2',
     seviye: 'DB1,REAL0',
+    amper: 'DB2,REAL24',
 };
 ambarPLC.initiateConnection({
     port: 102,
@@ -646,7 +648,7 @@ function ambarPLCconnected(err) {
     ambarPLC.setTranslationCB(function (tag) {
         return ambarPLCvariables[tag];
     });
-    ambarPLC.addItems(['status', 'seviye']);
+    ambarPLC.addItems(['status', 'seviye', 'amper']);
     ambarPLC.readAllItems(ambarPLCvaluesReady);
 }
 function ambarPLCvaluesReady(err, values) {
@@ -655,6 +657,7 @@ function ambarPLCvaluesReady(err, values) {
         ambarPLC.readAllItems(ambarPLCvaluesReady);
         plcdata.ambarstatus = values.status;
         plcdata.ambarseviye = values.seviye;
+        plcdata.ambaramper = values.amper;
     }
 }
 
@@ -688,6 +691,7 @@ function SaveAmbarData() {
             time: GetDate(true),
             status: status,
             seviye: plcdata.ambarseviye,
+            amper: plcdata.ambaramper
         });
         fs.writeFile(`./ambardata/${GetFileDate(true)}/${GetFileDate()}.json`, JSON.stringify(amdata), err => {
             if (err) throw err;

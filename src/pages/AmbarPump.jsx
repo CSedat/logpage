@@ -25,6 +25,9 @@ for (let t = 1; t < 13; t++) {
 }
 
 export default function App() {
+    const [statu, setStatu] = useState(0);
+    const [seviye, setSeviye] = useState(0);
+    const [amper, setAmper] = useState(0);
     const [chartData, setChartData] = useState({
         labels: ['labs'],
         datasets: [
@@ -42,6 +45,13 @@ export default function App() {
                 backgroundColor: 'rgba(53, 162, 235, 0.5)',
                 tension: 0.5
             },
+            {
+                label: 'Amper',
+                data: ['datasets3'],
+                borderColor: 'rgb(255, 255, 0)',
+                backgroundColor: 'rgba(255, 255, 0, 0.5)',
+                tension: 0.5
+            },
         ]
     })
     const [selectedday, setSelectedday] = useState(moment().format('D'));
@@ -52,6 +62,7 @@ export default function App() {
         let labs = [];
         let datasets1 = [];
         let datasets2 = [];
+        let datasets3 = [];
         axios.post('http://10.35.13.108:8001/api/getambardatafromdate', {
             date: `${selectedmon}-${selectedyear}`,
             dateFull: `${selectedday}-${selectedmon}-${selectedyear}`
@@ -61,8 +72,9 @@ export default function App() {
             for (const cdata of data) {
                 const element = cdata;
                 labs.push(element.time);
-                datasets1.push(element.status);
-                datasets2.push(element.seviye);
+                datasets1.push(element?.status);
+                datasets2.push(element?.seviye);
+                datasets3.push(element?.amper);
             }
             setChartData({
                 labels: labs,
@@ -81,6 +93,13 @@ export default function App() {
                         backgroundColor: 'rgba(53, 162, 235, 0.5)',
                         tension: 0.5
                     },
+                    {
+                        label: 'Amper',
+                        data: datasets3,
+                        borderColor: 'rgb(255, 255, 0)',
+                        backgroundColor: 'rgba(255, 255, 0, 0.5)',
+                        tension: 0.5
+                    },
                 ]
             })
         }).catch(err => {
@@ -90,10 +109,28 @@ export default function App() {
 
     useEffect(() => {
         getData();
+        RefreshData()
+        setInterval(() => {
+            RefreshData()
+        }, 2500);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedday, selectedmon, selectedyear]);
+
+    function RefreshData(){
+        axios.get("http://10.35.13.108:8001/api/getPLCData").then((response) => {
+            let jsondata = response.data;
+            setStatu(jsondata.ambarstatus);
+            setSeviye(jsondata.ambarseviye);
+            setAmper(jsondata.ambaramper);
+        });
+    }
     return (
         <div>
+            <div className=' mx-auto p-1 m-1 bg-gray-700 rounded text-white w-1/3  text-center grid grid-cols-3'>
+                <p>Durum: {statu === 1 ? 'Çalışıyor' : statu === 2 ? 'Çalışmıyor' : statu === 3 ? 'Acil Stop' : statu === 4 ? 'Termik Atık' : 'Bilinmiyor' }</p>
+                <p>Seviye: {seviye}</p>
+                <p>Amper: {amper}</p>
+            </div>
             <div className=' h-50 w-full overflow-hidden p-4'>
                 <Line 
                     style={{height: '80%', width: '80%'}}

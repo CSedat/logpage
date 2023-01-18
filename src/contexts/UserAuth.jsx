@@ -7,4 +7,3 @@ export{
     UserAuthContext,
     useContext
 }
-// Language: javascript

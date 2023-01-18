@@ -61,7 +61,7 @@ export default function Works() {
                                             <strong> [ {row.data.names.length} kişi {work.sure} saat {work.tip} ]</strong>
                                             {
                                                 permission ? null : 
-                                                <button className=" bg-red-500 text-white mx-1 w-5 rounded"
+                                                <button className=" bg-red-500 text-white mx-1 w-5 rounded select-none"
                                                 onClick={() => {
                                                     axios.post("http://10.35.13.108:8001/api/deletework", {
                                                         row,
@@ -83,7 +83,7 @@ export default function Works() {
                                         onClick={() => {
                                             setPopup(true)
                                             setPopupData(row)
-                                        }} className=" bg-green-500 rounded p-1">İş Ekle</button>
+                                        }} className=" bg-green-500 rounded p-1 select-none">İş Ekle</button>
                                         
                                     }
                                 </td>
