@@ -129,7 +129,7 @@ const users = [
         id: 8,
         username: "aysunkupcu",
         password: "ak123456..",
-        roles:['pdc', 'slurry', 'kmadde']
+        roles:['pdc', 'yks', 'slurry', 'kmadde', 'density']
     },
     {
         id: 9,
@@ -154,7 +154,13 @@ const users = [
         username: "mehmetgec",
         password: "mg123456.",
         roles:['pdc', 'yks', 'slurry', 'kmadde', 'ambar', 'works']
-    	},
+    },
+    {
+        id: 12,
+        username: "tuncaysaral",
+        password: "ts112233",
+        roles:['pdc', 'yks', 'slurry', 'kmadde', 'ambar', 'press', 'density', 'works']
+    },
 ]
 
 app.use(express.json());

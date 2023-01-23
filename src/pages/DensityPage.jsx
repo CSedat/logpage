@@ -24,6 +24,7 @@ for (let t = 1; t < 13; t++) {
     })
 }
 
+
 export default function App() {
     const [chartData, setChartData] = useState({
         labels: ['labs'],
@@ -43,9 +44,14 @@ export default function App() {
 
     const [density, setDensity] = useState(0);
 
+    const [ortDensity, setOrtDensity] = useState(0);
+
+
     const getData = () => {
         let labs = [];
         let datasets1 = [];
+        let ortDensityArr = []
+        let totDensity = 0
         axios.post('http://10.35.13.108:8001/api/getdensitydatafromdate', {
             date: `${selectedmon}-${selectedyear}`,
             dateFull: `${selectedday}-${selectedmon}-${selectedyear}`
@@ -55,7 +61,13 @@ export default function App() {
                 const element = cdata;
                 labs.push(element.time);
                 datasets1.push(element.density);
+                if (element.density >= 1000){
+                    ortDensityArr.push(element)
+                    totDensity += element.density
+                }
             }
+
+            setOrtDensity((totDensity / ortDensityArr.length).toFixed(2))
             setChartData({
                 labels: labs,
                 datasets: [
@@ -68,6 +80,8 @@ export default function App() {
                     }
                 ]
             })
+        }).then(() => {
+            // console.log(firstort)
         }).catch(err => {
             console.log(err)
         })
@@ -89,7 +103,13 @@ export default function App() {
     }, [selectedday, selectedmon, selectedyear]);
     return (
         <div>
-            <p className=' text-center bg-gray-800 w-48 rounded mx-auto'>Şuanki Yoğunluk: {density}</p>
+            <div className=' text-center bg-gray-800 w-[30rem] rounded mx-auto grid grid-cols-2'>
+                <p className=' '>Şuanki Yoğunluk</p>
+                <p className=' '>Günlük Ortalama Yoğunluk</p>
+                <p className=' '>{density}</p>
+                <p className=' '>{ortDensity}</p>
+
+            </div>
             <div className=' h-50 w-full overflow-hidden p-4'>
                 <Line 
                     style={{height: '80%', width: '80%'}}

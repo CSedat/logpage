@@ -120,7 +120,7 @@ export default function App() {
         axios.get("http://10.35.13.108:8001/api/getPLCData").then((response) => {
             let jsondata = response.data;
             setStatu(jsondata.ambarstatus);
-            setSeviye(jsondata.ambarseviye);
+            setSeviye((jsondata.ambarseviye).toFixed(2));
             setAmper(jsondata.ambaramper);
         });
     }
