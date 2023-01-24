@@ -35,7 +35,7 @@ var plcdata = {
     ambaramper: 0,
     lavvarkwh: 0,
     crusherkwh: 0,
-    crusherpdc:{
+    crusherpdc: {
         bc1b_1: 0,
         bc1c_2: 0,
     },
@@ -87,79 +87,79 @@ const users = [
         id: 1,
         username: "sedatcapar",
         password: "ss1q2w",
-        roles:['pdc', 'yks', 'slurry', 'kmadde', 'ambar', 'press', 'density', 'works', 'elektrik']
+        roles: ['pdc', 'yks', 'slurry', 'kmadde', 'ambar', 'press', 'density', 'works', 'elektrik']
     },
     {
         id: 2,
         username: "tunahansimsek",
         password: "1925",
-        roles:['pdc', 'yks', 'slurry', 'kmadde', 'ambar', 'press', 'density', 'works', 'elektrik']
+        roles: ['pdc', 'yks', 'slurry', 'kmadde', 'ambar', 'press', 'density', 'works', 'elektrik']
     },
     {
         id: 3,
         username: "irfansariyar",
         password: "özürdilerimtunahan",
-        roles:['pdc', 'yks', 'slurry', 'kmadde', 'ambar', 'press', 'density', 'works']
+        roles: ['pdc', 'yks', 'slurry', 'kmadde', 'ambar', 'press', 'density', 'works']
     },
     {
         id: 4,
         username: "tansukoralay",
         password: "ts1q2w",
-        roles:['pdc', 'yks', 'slurry', 'kmadde', 'ambar', 'press', 'density', 'works']
+        roles: ['pdc', 'yks', 'slurry', 'kmadde', 'ambar', 'press', 'density', 'works']
     },
     {
         id: 5,
         username: "kontrolmerkezi",
         password: "Pe123456@",
-        roles:['pdc', 'yks', 'slurry', 'ambar', 'press', 'density']
+        roles: ['pdc', 'yks', 'slurry', 'ambar', 'press', 'density']
     },
     {
         id: 6,
         username: "laboratuvar",
         password: "7452",
-        roles:['pdc', 'slurry', 'kmadde', 'yks', 'density']
+        roles: ['pdc', 'slurry', 'kmadde', 'yks', 'density']
     },
     {
         id: 7,
         username: "kaanuzuner",
         password: "ku123456.",
-        roles:['pdc', 'yks', 'slurry', 'kmadde', 'ambar', 'density']
+        roles: ['pdc', 'yks', 'slurry', 'kmadde', 'ambar', 'density']
     },
     {
         id: 8,
         username: "aysunkupcu",
         password: "ak123456..",
-        roles:['pdc', 'yks', 'slurry', 'kmadde', 'density']
+        roles: ['pdc', 'yks', 'slurry', 'kmadde', 'density']
     },
     {
         id: 9,
         username: "mehmetkelesoglu",
         password: "mk123456",
-        roles:['pdc', 'slurry', 'kmadde', 'ambar', 'density']
+        roles: ['pdc', 'slurry', 'kmadde', 'ambar', 'density']
     },
     {
         id: 10,
         username: "alicanyuzbasi",
         password: "ac123456",
-        roles:['pdc', 'yks', 'slurry', 'kmadde', 'ambar']
+        roles: ['pdc', 'yks', 'slurry', 'kmadde', 'ambar']
     },
     {
         id: 11,
         username: "elektrik",
         password: "741369",
-        roles:['pdc', 'yks', 'slurry', 'kmadde', 'ambar', 'press', 'density', 'works', 'elektrik']
+        roles: ['pdc', 'yks', 'slurry', 'kmadde', 'ambar', 'press', 'density', 'works', 'elektrik']
     },
-	{
+    {
         id: 11,
         username: "mehmetgec",
         password: "mg123456.",
-        roles:['pdc', 'yks', 'slurry', 'kmadde', 'ambar', 'works']
+        roles: ['pdc', 'yks', 'slurry', 'kmadde', 'ambar', 'works']
     },
     {
         id: 12,
         username: "tuncaysaral",
         password: "ts112233",
-        roles:['pdc', 'yks', 'slurry', 'kmadde', 'ambar', 'press', 'density', 'works']
+        roles: ['pdc', 'yks', 'slurry', 'kmadde', 'ambar', 'press', 'density', 'works']
     },
 ]
 
@@ -271,9 +271,9 @@ app.get('/api/getworksdata', function (req, res) {
 
 app.post('/api/labdatasavenem', function (req, res) {
     var data = req.body;
-    
+
     fs.readFile(`./laboratuvar/data.json`, null, function (error, r) {
-        if (error) {console.log(error);res.send('error');return}
+        if (error) { console.log(error); res.send('error'); return }
         let d = JSON.parse(r);
         for (let l = 0; l < d.length; l++) {
             let element = d[l];
@@ -294,7 +294,7 @@ app.post('/api/labdatayogunluk', function (req, res) {
     var data = req.body;
 
     fs.readFile(`./laboratuvar/data.json`, null, function (error, r) {
-        if (error) {console.log(error);res.send('error');return}
+        if (error) { console.log(error); res.send('error'); return }
         let d = JSON.parse(r);
         for (let l = 0; l < d.length; l++) {
             let element = d[l];
@@ -350,7 +350,7 @@ app.get('/api/saveslurry', function (req, res) {
         try {
             resolve(req.query);
         } catch (e) {
-            
+
             console.log(e);
         }
     })
@@ -396,7 +396,7 @@ app.get('/api/saveslurry', function (req, res) {
         setTimeout(function () {
             var prof = new Promise(function (resolve, reject) {
                 fs.readFile('./slurrydata.json', null, function (error, data) {
-                    if (error) {  console.log(error); }
+                    if (error) { console.log(error); }
                     var jdata = JSON.parse(data)
                     var Slurry = 0;
                     for (var i in jdata.slice(0, 23)) {
@@ -503,7 +503,7 @@ app.get("/takeX", (req, res) => {
         setTimeout(function () {
             var prof = new Promise(function (resolve, reject) {
                 fs.readFile('./data.json', null, function (error, data) {
-                    if (error) {  console.log(error); }
+                    if (error) { console.log(error); }
                     var jdata = JSON.parse(data)
                     var BC1B_PDC1 = 0, BC1B_PDC2 = 0, D301_PDC1 = 0, D301_PDC2 = 0, D701 = 0, D705 = 0, D706 = 0, D707 = 0, D710 = 0, Keson = 0, Slurry = 0, kWh = (plcdata.lavvarkwh + plcdata.crusherkwh), kWhvard = 0;
                     for (var i in jdata.slice(0, 3)) {
@@ -599,7 +599,7 @@ var mainPLCvariables = {
 
 function mainPLCconnected(err) {
     if (typeof (err) !== "undefined") {
-        console.log('\x1b[31m', `Main PLC bağlantısı kurulamadı` ,'\x1b[0m');
+        console.log('\x1b[31m', `Main PLC bağlantısı kurulamadı`, '\x1b[0m');
         plcConnection.maincpu = false;
     }
     mainPLC.setTranslationCB(function (tag) {
@@ -609,8 +609,8 @@ function mainPLCconnected(err) {
     mainPLC.readAllItems(valuesReady);
 }
 function valuesReady(err, values) {
-    if (err) { console.log('\x1b[31m', `s7-1500 Plc Bağlantısı Yok yada Okunan Değerlerde Hata Var` ,'\x1b[0m'); plcConnection.maincpu = false;}else{plcConnection.maincpu = true;}
-    if(plcConnection.maincpu == true){
+    if (err) { console.log('\x1b[31m', `s7-1500 Plc Bağlantısı Yok yada Okunan Değerlerde Hata Var`, '\x1b[0m'); plcConnection.maincpu = false; } else { plcConnection.maincpu = true; }
+    if (plcConnection.maincpu == true) {
         mainPLC.readAllItems(valuesReady);
         plcdata.slurrym3 = parseInt(values.m3Slurry.toFixed(2));
         plcdata.slurryhourly = values.HourlySlurry;
@@ -648,7 +648,7 @@ app.get('/api/getPLCConnections', function (req, res) {
 
 function ambarPLCconnected(err) {
     if (typeof (err) !== "undefined") {
-        console.log('\x1b[31m', `Ambar PLC bağlantısı kurulamadı` ,'\x1b[0m');
+        console.log('\x1b[31m', `Ambar PLC bağlantısı kurulamadı`, '\x1b[0m');
         plcConnection.ambarcpu = false;
     }
     ambarPLC.setTranslationCB(function (tag) {
@@ -658,8 +658,8 @@ function ambarPLCconnected(err) {
     ambarPLC.readAllItems(ambarPLCvaluesReady);
 }
 function ambarPLCvaluesReady(err, values) {
-    if (err) { console.log('\x1b[31m', `Ambar Plc Bağlantısı Yok yada Okunan Değerlerde Hata Var` ,'\x1b[0m'); plcConnection.ambarcpu = false; return }else{plcConnection.ambarcpu = true;}
-    if(plcConnection.ambarcpu == true){
+    if (err) { console.log('\x1b[31m', `Ambar Plc Bağlantısı Yok yada Okunan Değerlerde Hata Var`, '\x1b[0m'); plcConnection.ambarcpu = false; return } else { plcConnection.ambarcpu = true; }
+    if (plcConnection.ambarcpu == true) {
         ambarPLC.readAllItems(ambarPLCvaluesReady);
         plcdata.ambarstatus = values.status;
         plcdata.ambarseviye = values.seviye;
@@ -669,26 +669,26 @@ function ambarPLCvaluesReady(err, values) {
 
 function GetFileDate(bb) {
     var today = new Date();
-    if(bb){
+    if (bb) {
         var date = (today.getMonth() + 1) + '-' + today.getFullYear();
         return date;
-    }else{
+    } else {
         var date = today.getDate() + '-' + (today.getMonth() + 1) + '-' + today.getFullYear();
         return date;
     }
 }
 function SaveAmbarData() {
     fs.readFile(`./ambardata/${GetFileDate(true)}/${GetFileDate()}.json`, null, function (error, data) {
-        if (error) {  console.log(error); }
+        if (error) { console.log(error); }
         var amdata = JSON.parse(data)
         let status = 0;
         if (plcdata.ambarstatus === 1) {
             status = 10;
-        } else if (plcdata.ambarstatus === 2){
+        } else if (plcdata.ambarstatus === 2) {
             status = 20;
-        } else if (plcdata.ambarstatus === 3){
+        } else if (plcdata.ambarstatus === 3) {
             status = 30;
-        } else if (plcdata.ambarstatus === 4){
+        } else if (plcdata.ambarstatus === 4) {
             status = 40;
         } else {
             status = 0;
@@ -706,38 +706,38 @@ function SaveAmbarData() {
 }
 setInterval(() => {
     var dir = `./ambardata/${GetFileDate(true)}`;
-    if (!fs.existsSync(dir)){
+    if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir, { recursive: true });
-        console.log('\x1b[32m', `${dir} directory created.` ,'\x1b[0m');
+        console.log('\x1b[32m', `${dir} directory created.`, '\x1b[0m');
         fs.readFile(`./ambardata/${GetFileDate(true)}/${GetFileDate()}.json`, null, function (error, data) {
-            if (error) {  
+            if (error) {
                 fs.appendFile(`./ambardata/${GetFileDate(true)}/${GetFileDate()}.json`, '[]', err => {
                     if (err) throw err;
-                    console.log('\x1b[32m', `${GetFileDate()}.json File created.` ,'\x1b[0m');
+                    console.log('\x1b[32m', `${GetFileDate()}.json File created.`, '\x1b[0m');
                     SaveAmbarData()
                 });
-            }else{
+            } else {
                 SaveAmbarData()
             }
         });
-    }else{
+    } else {
         fs.readFile(`./ambardata/${GetFileDate(true)}/${GetFileDate()}.json`, null, function (error, data) {
-            if (error) {  
+            if (error) {
                 fs.appendFile(`./ambardata/${GetFileDate(true)}/${GetFileDate()}.json`, '[]', err => {
                     if (err) throw err;
-                    console.log('\x1b[32m', `${GetFileDate()}.json File created.` ,'\x1b[0m');
+                    console.log('\x1b[32m', `${GetFileDate()}.json File created.`, '\x1b[0m');
                     SaveAmbarData()
                 });
-            }else{
+            } else {
                 SaveAmbarData()
             }
         });
     }
-} , 60000);
+}, 60000);
 
 function crusherPLCconnected(err) {
     if (typeof (err) !== "undefined") {
-        console.log('\x1b[31m', `Crusher PLC bağlantısı kurulamadı` ,'\x1b[0m');
+        console.log('\x1b[31m', `Crusher PLC bağlantısı kurulamadı`, '\x1b[0m');
         plcConnection.crushercpu = false;
     }
     crusherPLC.setTranslationCB(function (tag) {
@@ -747,8 +747,8 @@ function crusherPLCconnected(err) {
     crusherPLC.readAllItems(crusherPLCvaluesReady);
 }
 function crusherPLCvaluesReady(err, values) {
-    if (err) { console.log('\x1b[31m', `Kırıcı Plc Bağlantısı Yok yada Okunan Değerlerde Hata Var` ,'\x1b[0m'); plcConnection.crushercpu = false; return crusherPLCvaluesReady }else{plcConnection.crushercpu = true;}
-    if(plcConnection.crushercpu == true){
+    if (err) { console.log('\x1b[31m', `Kırıcı Plc Bağlantısı Yok yada Okunan Değerlerde Hata Var`, '\x1b[0m'); plcConnection.crushercpu = false; return crusherPLCvaluesReady } else { plcConnection.crushercpu = true; }
+    if (plcConnection.crushercpu == true) {
         crusherPLC.readAllItems(crusherPLCvaluesReady);
         plcdata.crusherkwh = parseInt(values.crusherkhw.toFixed());
         plcdata.crusherpdc = {
@@ -761,7 +761,7 @@ function crusherPLCvaluesReady(err, values) {
 
 function D609_Pressconnected(err) {
     if (typeof (err) !== "undefined") {
-        console.log('\x1b[31m', `D609 PLC bağlantısı kurulamadı` ,'\x1b[0m');
+        console.log('\x1b[31m', `D609 PLC bağlantısı kurulamadı`, '\x1b[0m');
         plcConnection.d609cpu = false;
     }
     D609_Press.setTranslationCB(function (tag) {
@@ -771,15 +771,15 @@ function D609_Pressconnected(err) {
     D609_Press.readAllItems(D609_PressvaluesReady);
 }
 function D609_PressvaluesReady(err, values) {
-    if (err) { console.log('\x1b[31m', `D609 Plc Bağlantısı Yok yada Okunan Değerlerde Hata Var` ,'\x1b[0m'); plcConnection.d609cpu = false;}else{plcConnection.d609cpu = true;}
-    if(plcConnection.d609cpu == true){
+    if (err) { console.log('\x1b[31m', `D609 Plc Bağlantısı Yok yada Okunan Değerlerde Hata Var`, '\x1b[0m'); plcConnection.d609cpu = false; } else { plcConnection.d609cpu = true; }
+    if (plcConnection.d609cpu == true) {
         D609_Press.readAllItems(D609_PressvaluesReady);
         plcdata.D609Status = values.status;
     }
 }
 function Save609PressData() {
     fs.readFile(`./pressdata/${GetFileDate(true)}/${GetFileDate()}.json`, null, function (error, data) {
-        if (error) {  console.log(error); }
+        if (error) { console.log(error); }
         var amdata = JSON.parse(data)
         let d609status = 0;
         let d610status = 0;
@@ -881,7 +881,7 @@ function Save609PressData() {
             default:
                 break;
         }
-        
+
         amdata.push({
             time: GetDate(true),
             d609: d609status,
@@ -895,39 +895,39 @@ function Save609PressData() {
 
 setInterval(() => {
     var dir = `./pressdata/${GetFileDate(true)}`;
-    if (!fs.existsSync(dir)){
+    if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir, { recursive: true });
-        console.log('\x1b[32m', `${dir} directory created.` ,'\x1b[0m');
+        console.log('\x1b[32m', `${dir} directory created.`, '\x1b[0m');
         fs.readFile(`./pressdata/${GetFileDate(true)}/${GetFileDate()}.json`, null, function (error, data) {
-            if (error) {  
+            if (error) {
                 fs.appendFile(`./pressdata/${GetFileDate(true)}/${GetFileDate()}.json`, '[]', err => {
                     if (err) throw err;
-                    console.log('\x1b[32m', `${GetFileDate()}.json File created.` ,'\x1b[0m');
+                    console.log('\x1b[32m', `${GetFileDate()}.json File created.`, '\x1b[0m');
                     Save609PressData()
                 });
-            }else{
+            } else {
                 Save609PressData()
             }
         });
-    }else{
+    } else {
         fs.readFile(`./pressdata/${GetFileDate(true)}/${GetFileDate()}.json`, null, function (error, data) {
-            if (error) {  
+            if (error) {
                 fs.appendFile(`./pressdata/${GetFileDate(true)}/${GetFileDate()}.json`, '[]', err => {
                     if (err) throw err;
-                    console.log('\x1b[32m', `${GetFileDate()}.json File created.` ,'\x1b[0m');
+                    console.log('\x1b[32m', `${GetFileDate()}.json File created.`, '\x1b[0m');
                     Save609PressData()
                 });
-            }else{
+            } else {
                 Save609PressData()
             }
         });
     }
-} , 60000);
+}, 60000);
 
 
 function D610_Pressconnected(err) {
     if (typeof (err) !== "undefined") {
-        console.log('\x1b[31m', `D610 PLC bağlantısı kurulamadı` ,'\x1b[0m');
+        console.log('\x1b[31m', `D610 PLC bağlantısı kurulamadı`, '\x1b[0m');
         plcConnection.d610cpu = false;
     }
     D610_Press.setTranslationCB(function (tag) {
@@ -937,8 +937,8 @@ function D610_Pressconnected(err) {
     D610_Press.readAllItems(D610_PressvaluesReady);
 }
 function D610_PressvaluesReady(err, values) {
-    if (err) { console.log('\x1b[31m', `D610 Plc Bağlantısı Yok yada Okunan Değerlerde Hata Var` ,'\x1b[0m'); plcConnection.d610cpu = false;}else{plcConnection.d610cpu = true;}
-    if(plcConnection.d610cpu == true){
+    if (err) { console.log('\x1b[31m', `D610 Plc Bağlantısı Yok yada Okunan Değerlerde Hata Var`, '\x1b[0m'); plcConnection.d610cpu = false; } else { plcConnection.d610cpu = true; }
+    if (plcConnection.d610cpu == true) {
         D610_Press.readAllItems(D610_PressvaluesReady);
         plcdata.D610Status = values.status;
     }
@@ -950,39 +950,39 @@ setInterval(() => {
     var dir = `./density/${GetFileDate(true)}`;
     var min = parseInt(moment().format('mm'));
     if (min == 00 || min == 30) {
-        if (!fs.existsSync(dir)){
+        if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir, { recursive: true });
-            console.log('\x1b[32m', `${dir} directory created.` ,'\x1b[0m');
+            console.log('\x1b[32m', `${dir} directory created.`, '\x1b[0m');
             fs.readFile(`./density/${GetFileDate(true)}/${GetFileDate()}.json`, null, function (error, data) {
-                if (error) {  
+                if (error) {
                     fs.appendFile(`./density/${GetFileDate(true)}/${GetFileDate()}.json`, '[]', err => {
                         if (err) throw err;
-                        console.log('\x1b[32m', `${GetFileDate()}.json File created.` ,'\x1b[0m');
+                        console.log('\x1b[32m', `${GetFileDate()}.json File created.`, '\x1b[0m');
                         SaveDensityData()
                     });
-                }else{
+                } else {
                     SaveDensityData()
                 }
             });
-        }else{
+        } else {
             fs.readFile(`./density/${GetFileDate(true)}/${GetFileDate()}.json`, null, function (error, data) {
-                if (error) {  
+                if (error) {
                     fs.appendFile(`./density/${GetFileDate(true)}/${GetFileDate()}.json`, '[]', err => {
                         if (err) throw err;
-                        console.log('\x1b[32m', `${GetFileDate()}.json File created.` ,'\x1b[0m');
+                        console.log('\x1b[32m', `${GetFileDate()}.json File created.`, '\x1b[0m');
                         SaveDensityData()
                     });
-                }else{
+                } else {
                     SaveDensityData()
                 }
             });
         }
     }
-} , 60000);
+}, 60000);
 
 function SaveDensityData() {
     fs.readFile(`./density/${GetFileDate(true)}/${GetFileDate()}.json`, null, function (error, data) {
-        if (error) {  console.log(error); }
+        if (error) { console.log(error); }
         var densitydata = JSON.parse(data)
         densitydata.push({
             time: GetDate(true),
@@ -1002,30 +1002,30 @@ setInterval(() => {
         fs.readFile('./works/works.json', null, function (error, data) {
             if (error) { console.log(error); }
             var jdata = JSON.parse(data)
-        
+
             jdata.unshift({
                 data: {
                     date: key,
-                    vardiya: hour >= 00 && hour <= 7 ? 'V1' : hour >= 8 && hour <= 15 ? 'V2' : hour >= 16 && hour <= 23 ? 'V3': null,
+                    vardiya: hour >= 00 && hour <= 7 ? 'V1' : hour >= 8 && hour <= 15 ? 'V2' : hour >= 16 && hour <= 23 ? 'V3' : null,
                     names: [],
                     works: [],
                 }
             });
-            
+
             fs.writeFile('./works/works.json', JSON.stringify(jdata), err => {
                 if (err) throw err;
                 console.log(`${key} iş oluşturuldu!`);
             });
         });
     }
-} , 60000);
+}, 60000);
 
 app.post('/api/savework', function (req, res) {
     let adata = req.body
     let date = req.body.date
     let vardiya = req.body.vardiya
     fs.readFile('./works/works.json', null, function (error, data) {
-        if (error) {  console.log(error); }
+        if (error) { console.log(error); }
         var jdata = JSON.parse(data)
 
         for (let j = 0; j < jdata.length; j++) {
@@ -1055,7 +1055,7 @@ app.post('/api/deletework', function (req, res) {
     let work = req.body.work
 
     fs.readFile('./works/works.json', null, function (error, data) {
-        if (error) {  console.log(error); }
+        if (error) { console.log(error); }
         var jdata = JSON.parse(data)
 
         for (let j = 0; j < jdata.length; j++) {
@@ -1064,7 +1064,7 @@ app.post('/api/deletework', function (req, res) {
                 if (e.data.vardiya == row.data.vardiya) {
                     for (let v = 0; v < e.data.works.length; v++) {
                         const element = e.data.works[v];
-                        if(element.work == work.work){
+                        if (element.work == work.work) {
                             e.data.works.splice(v, 1)
                         }
                     }
