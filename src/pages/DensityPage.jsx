@@ -225,7 +225,7 @@ export default function App() {
                         id="id"
                     >
                         <option value="2022">2022</option>
-                        <option value="2023">2023</option>
+                        <option value="2023" selected>2023</option>
                     </select>
                 </div>
             </div>
