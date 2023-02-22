@@ -1,18 +1,23 @@
-var http = require('http');
+﻿var http = require('http');
 var static = require('node-static');
 var fileServer = new static.Server('./client');
 var port = process.env.PORT || 8000;
 var nodes7 = require('nodes7');
+const { spawn } = require('child_process');
+
+function restartCommandPrompt() {
+    const command = spawn('cmd.exe', ['/c', 'start', 'startserver.bat'], { stdio: 'inherit' });
+    command.on('exit', () => {
+      console.log('Komut istemi yeniden başlatıldı');
+    });
+}
+
+setTimeout(() => {
+    restartCommandPrompt();
+}, 2000);
 
 http.createServer(function (req, res) {
     fileServer.serve(req, res);
-    // if (req.url != "/") {
-    //     console.log('Page redirected to /');
-    //     res.writeHead(302, {
-    //         location: "http://10.35.13.108:8000",
-    //     });
-    //     res.end();
-    // }
 }).listen(port);
 console.log(`Http server running at http://127.0.0.1:${port}/`);
 
@@ -23,7 +28,6 @@ const appport = 8001
 const app = express();
 const bodyParser = require('body-parser')
 const moment = require('moment');
-const XLSX = require("xlsx");
 const path = require('path');
 
 var plcdata = {
@@ -64,6 +68,10 @@ var plcdata = {
         findik: 0,
         toz: 0,
         araurun: 0,
+    },
+    NFPressSatus: {
+        A1: 0,
+        B1: 0,
     }
 }
 
@@ -123,7 +131,7 @@ const users = [
         id: 7,
         username: "kaanuzuner",
         password: "ku123456.",
-        roles: ['pdc', 'yks', 'slurry', 'kmadde', 'ambar', 'density']
+        roles: ['pdc', 'yks', 'slurry', 'kmadde', 'ambar', 'press', 'density', 'works']
     },
     {
         id: 8,
@@ -139,12 +147,6 @@ const users = [
     },
     {
         id: 10,
-        username: "alicanyuzbasi",
-        password: "ac123456",
-        roles: ['pdc', 'yks', 'slurry', 'kmadde', 'ambar']
-    },
-    {
-        id: 11,
         username: "elektrik",
         password: "741369",
         roles: ['pdc', 'yks', 'slurry', 'kmadde', 'ambar', 'press', 'density', 'works', 'elektrik']
@@ -159,8 +161,8 @@ const users = [
         id: 12,
         username: "tuncaysaral",
         password: "ts112233",
-        roles: ['pdc', 'yks', 'slurry', 'kmadde', 'ambar', 'press', 'density', 'works']
-    },
+        roles: ['pdc', 'yks', 'slurry', 'kmadde', 'ambar', 'works']
+    }
 ]
 
 app.use(express.json());
@@ -174,13 +176,12 @@ mainPLC.initiateConnection({
     host: '10.35.17.10',
     rack: 0,
     slot: 1,
-    timeout: 3000,
-    debug: true
+    debug: false
 }, mainPLCconnected);
 var ambarPLC = new nodes7;
 var ambarPLCvariables = {
     status: 'DB2,INT2',
-    seviye: 'DB1,REAL0',
+    seviye: 'DB2,REAL12',
     amper: 'DB2,REAL24',
 };
 ambarPLC.initiateConnection({
@@ -188,8 +189,7 @@ ambarPLC.initiateConnection({
     host: '10.35.14.184',
     rack: 0,
     slot: 1,
-    timeout: 3000,
-    debug: true
+    debug: false
 }, ambarPLCconnected);
 var D609_Press = new nodes7;
 var D609_Pressvariables = {
@@ -200,8 +200,7 @@ D609_Press.initiateConnection({
     host: '10.35.17.40',
     rack: 0,
     slot: 1,
-    timeout: 3000,
-    debug: true
+    debug: false
 }, D609_Pressconnected);
 var crusherPLC = new nodes7;
 var crusherPLCvariables = {
@@ -214,8 +213,7 @@ crusherPLC.initiateConnection({
     host: '10.35.17.11',
     rack: 0,
     slot: 1,
-    timeout: 3000,
-    debug: true
+    debug: false
 }, crusherPLCconnected);
 var D610_Press = new nodes7;
 var D610_Pressvariables = {
@@ -226,8 +224,7 @@ D610_Press.initiateConnection({
     host: '10.35.17.50',
     rack: 0,
     slot: 1,
-    timeout: 3000,
-    debug: true
+    debug: false
 }, D610_Pressconnected);
 
 
@@ -595,6 +592,7 @@ var mainPLCvariables = {
     MainPLCPdc710: 'DB13,REAL20',
     D328Values: 'DB85,REAL8',
     Silolar: 'DB88,INT0.5',
+    NFPressSatus: 'DB92,INT0.2',
 };
 
 function mainPLCconnected(err) {
@@ -605,7 +603,7 @@ function mainPLCconnected(err) {
     mainPLC.setTranslationCB(function (tag) {
         return mainPLCvariables[tag];
     });
-    mainPLC.addItems(['m3Slurry', 'HourlySlurry', 'SlurryTotal', 'Pac3200', 'MainPLCMBPdc', 'MainPLCPdc710', 'D328Values', 'Silolar']);
+    mainPLC.addItems(['m3Slurry', 'HourlySlurry', 'SlurryTotal', 'Pac3200', 'MainPLCMBPdc', 'MainPLCPdc710', 'D328Values', 'Silolar', 'NFPressSatus']);
     mainPLC.readAllItems(valuesReady);
 }
 function valuesReady(err, values) {
@@ -634,6 +632,10 @@ function valuesReady(err, values) {
             findik: values.Silolar[2],
             toz: values.Silolar[3],
             araurun: values.Silolar[4]
+        }
+        plcdata.NFPressSatus = {
+            A1: values.NFPressSatus[0],
+            B1: values.NFPressSatus[1],
         }
     }
 }
@@ -783,6 +785,8 @@ function Save609PressData() {
         var amdata = JSON.parse(data)
         let d609status = 0;
         let d610status = 0;
+        let a1status = 0;
+        let b1status = 0;
         switch (plcdata.D609Status) {
             case 1:
                 d609status = 10;
@@ -882,10 +886,81 @@ function Save609PressData() {
                 break;
         }
 
+        switch (plcdata.NFPressSatus.A1) {
+            case 1:
+                a1status = 10;
+                break;
+            case 2:
+                a1status = 20
+                break;
+            case 3:
+                a1status = 30
+                break;
+            case 4:
+                a1status = 40
+                break;
+            case 5:
+                a1status = 50
+                break;
+            case 6:
+                a1status = 60
+                break;
+            case 7:
+                a1status = 70
+                break;
+            case 8:
+                a1status = 80
+                break;
+            case 9:
+                a1status = 90
+                break;
+            case 10:
+                a1status = 100
+                break;
+            default:
+                break;
+        }
+        switch (plcdata.NFPressSatus.B1) {
+            case 1:
+                b1status = 10;
+                break;
+            case 2:
+                b1status = 20
+                break;
+            case 3:
+                b1status = 30
+                break;
+            case 4:
+                b1status = 40
+                break;
+            case 5:
+                b1status = 50
+                break;
+            case 6:
+                b1status = 60
+                break;
+            case 7:
+                b1status = 70
+                break;
+            case 8:
+                b1status = 80
+                break;
+            case 9:
+                b1status = 90
+                break;
+            case 10:
+                b1status = 100
+                break;
+            default:
+                break;
+        }
+
         amdata.push({
             time: GetDate(true),
             d609: d609status,
-            d610: d610status
+            d610: d610status,
+            a1: a1status,
+            b1: b1status
         });
         fs.writeFile(`./pressdata/${GetFileDate(true)}/${GetFileDate()}.json`, JSON.stringify(amdata), err => {
             if (err) throw err;

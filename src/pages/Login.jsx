@@ -40,6 +40,7 @@ const Login = (props) => {
                     <button className=" bg-gradient-to-r from-green-500 to-blue-500 hover:from-pink-500 hover:to-yellow-500 px-4 py-1 uppercase m-2 rounded ">giriş yap</button>
                     {/* <p className=" text-xs">Giriş yetkilendirmesi için <strong>tunahan.simsek@polyakeynez.com</strong> ile iletişime geçebilirsiniz.</p> */}
                 </form>
+                <h1 className=" text-center text-xs relative uppercase text-gray-400">Bu Sayfadaki Tüm Değerler Sahadaki PLC'lerden Otomatik Olarak Toplanıp İşlenmektedir</h1>
                 {isAuth && <Navigate to={`/MainPage`} exact/>}
             </div>
         </div>

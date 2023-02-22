@@ -58,6 +58,20 @@ export default function App() {
                 backgroundColor: "rgba(53, 162, 235, 0.5)",
                 tension: 0.5,
             },
+            {
+                label: "A1 FP Durum (Yeni FP)",
+                data: ["datasets3"],
+                borderColor: "rgb(255, 255, 0)",
+                backgroundColor: "rgba(255, 255, 0, 0.5)",
+                tension: 0.5,
+            },
+            {
+                label: "B1 FP Durum (Yeni FP)",
+                data: ["datasets4"],
+                borderColor: "rgb(0, 255, 0)",
+                backgroundColor: "rgba(0, 255, 0, 0.5)",
+                tension: 0.5,
+            },
         ],
     });
     const [selectedday, setSelectedday] = useState(moment().format("D"));
@@ -68,6 +82,8 @@ export default function App() {
         let labs = [];
         let datasets1 = [];
         let datasets2 = [];
+        let datasets3 = [];
+        let datasets4 = [];
         axios
             .post("http://10.35.13.108:8001/api/getpressdatafromdate", {
                 date: `${selectedmon}-${selectedyear}`,
@@ -81,6 +97,8 @@ export default function App() {
                     labs.push(element.time);
                     datasets1.push(element.d609);
                     datasets2.push(element.d610);
+                    datasets3.push(element.a1);
+                    datasets4.push(element.b1);
                 }
                 setChartData({
                     labels: labs,
@@ -97,6 +115,20 @@ export default function App() {
                             data: datasets2,
                             borderColor: "rgb(53, 162, 235)",
                             backgroundColor: "rgba(53, 162, 235, 0.5)",
+                            tension: 0.5,
+                        },
+                        {
+                            label: "A1 FP Durum (Yeni FP)",
+                            data: datasets3,
+                            borderColor: "rgb(255, 255, 0)",
+                            backgroundColor: "rgba(255, 255, 0, 0.5)",
+                            tension: 0.5,
+                        },
+                        {
+                            label: "B1 FP Durum (Yeni FP)",
+                            data: datasets4,
+                            borderColor: "rgb(0, 255, 0)",
+                            backgroundColor: "rgba(0, 255, 0, 0.5)",
                             tension: 0.5,
                         },
                     ],
