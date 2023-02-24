@@ -7,6 +7,7 @@ import {
 import axios from "axios";
 import moment from "moment";
 
+
 const columns = [
     {
         align: "center",
@@ -90,126 +91,130 @@ export default function DataGridDemo() {
         axios.get("http://10.35.13.108:8501/getaraurun").then((response) => {
             let jsondata = response.data;
             let row = [];
-            let oldv1 = 0;
-            let oldv2 = 0;
-            let oldv3 = 0;
-            for (let g = 0; g < jsondata.length; g++) {
-                const element = jsondata[g];
-                let net = element.kantar - element.dara;
-                row.push({ ...element, net: net });
-                let d = element.date.split("/")[0];
-                let h = element.hour.split(":")[0];
-                let nowd = moment().format("DD");
-                if (d === nowd) {
-                    if (element.kantar.search("V")) {
-                        let nett = parseFloat(element.kantar - element.dara);
+            let v1Total = 0;
+            let v2Total = 0;
+            let v3Total = 0;
+            for (let i = 0; i < jsondata.length; i++) {
+                row.push({ ...jsondata[i], net: jsondata[i].kantar - jsondata[i].dara });
+                let d = jsondata[i].date.split('/')[0]
+                let m = jsondata[i].date.split('/')[1]
+                let h = jsondata[i].hour.split(':')[0]
+                let nowd = moment().format('DD')
+                let nowm = moment().format('MM')
+                if (Number(d) === Number(nowd) && Number(m) === Number(nowm)) {
+                    console.log(h, nowd)
+                    if (jsondata[i].kantar.search('V')) {
+                        let net = parseInt(jsondata[i].kantar - jsondata[i].dara)
                         if (h >= 0 && h <= 7) {
-                            oldv1 += nett;
-                            setAraurunv1(oldv1);
+                            v1Total += net
                         } else if (h >= 8 && h <= 15) {
-                            oldv2 += nett;
-                            setAraurunv2(oldv2);
+                            v2Total += net
                         } else if (h >= 16 && h <= 23) {
-                            oldv3 += nett;
-                            setAraurunv3(oldv3);
+                            v3Total += net
                         }
                     }
                 }
             }
             setAraurunrows(row);
+            setAraurunv1(v1Total);
+            setAraurunv2(v2Total);
+            setAraurunv3(v3Total);
         });
         axios.get("http://10.35.13.108:8501/gettoz").then((response) => {
             let jsondata = response.data;
             let row = [];
-            let oldv1 = 0;
-            let oldv2 = 0;
-            let oldv3 = 0;
-            for (let g = 0; g < jsondata.length; g++) {
-                const element = jsondata[g];
-                let net = element.kantar - element.dara;
-                row.push({ ...element, net: net });
-                let d = element.date.split("/")[0];
-                let h = element.hour.split(":")[0];
-                let nowd = moment().format("DD");
-                if (d === nowd) {
-                    if (element.kantar.search("V")) {
-                        let nett = parseFloat(element.kantar - element.dara);
+            let v1Total = 0;
+            let v2Total = 0;
+            let v3Total = 0;
+            for (let i = 0; i < jsondata.length; i++) {
+                row.push({ ...jsondata[i], net: jsondata[i].kantar - jsondata[i].dara });
+                let d = jsondata[i].date.split('/')[0]
+                let m = jsondata[i].date.split('/')[1]
+                let h = jsondata[i].hour.split(':')[0]
+                let nowd = moment().format('DD')
+                let nowm = moment().format('MM')
+                if (Number(d) === Number(nowd) && Number(m) === Number(nowm)) {
+                    console.log(h, nowd)
+                    if (jsondata[i].kantar.search('V')) {
+                        let net = parseInt(jsondata[i].kantar - jsondata[i].dara)
                         if (h >= 0 && h <= 7) {
-                            oldv1 += nett;
-                            setTozv1(oldv1);
+                            v1Total += net
                         } else if (h >= 8 && h <= 15) {
-                            oldv2 += nett;
-                            setTozv2(oldv2);
+                            v2Total += net
                         } else if (h >= 16 && h <= 23) {
-                            oldv3 += nett;
-                            setTozv3(oldv3);
+                            v3Total += net
                         }
                     }
                 }
             }
             setTozrows(row);
+            setTozv1(v1Total);
+            setTozv2(v2Total);
+            setTozv3(v3Total);
         });
         axios.get("http://10.35.13.108:8501/getfindik").then((response) => {
             let jsondata = response.data;
             let row = [];
-            let oldv1 = 0;
-            let oldv2 = 0;
-            let oldv3 = 0;
-            for (let g = 0; g < jsondata.length; g++) {
-                const element = jsondata[g];
-                let net = element.kantar - element.dara;
-                row.push({ ...element, net: net });
-                let d = element.date.split("/")[0];
-                let h = element.hour.split(":")[0];
-                let nowd = moment().format("DD");
-                if (d === nowd) {
-                    if (element.kantar.search("V")) {
-                        let nett = parseFloat(element.kantar - element.dara);
+            let v1Total = 0;
+            let v2Total = 0;
+            let v3Total = 0;
+            for (let i = 0; i < jsondata.length; i++) {
+                row.push({ ...jsondata[i], net: jsondata[i].kantar - jsondata[i].dara });
+                let d = jsondata[i].date.split('/')[0]
+                let m = jsondata[i].date.split('/')[1]
+                let h = jsondata[i].hour.split(':')[0]
+                let nowd = moment().format('DD')
+                let nowm = moment().format('MM')
+                if (Number(d) === Number(nowd) && Number(m) === Number(nowm)) {
+                    console.log(h, nowd)
+                    if (jsondata[i].kantar.search('V')) {
+                        let net = parseInt(jsondata[i].kantar - jsondata[i].dara)
                         if (h >= 0 && h <= 7) {
-                            oldv1 += nett;
-                            setFindikv1(oldv1);
+                            v1Total += net
                         } else if (h >= 8 && h <= 15) {
-                            oldv2 += nett;
-                            setFindikv2(oldv2);
+                            v2Total += net
                         } else if (h >= 16 && h <= 23) {
-                            oldv3 += nett;
-                            setFindikv3(oldv3);
+                            v3Total += net
                         }
                     }
                 }
             }
             setFindikrows(row);
+            setFindikv1(v1Total);
+            setFindikv2(v2Total);
+            setFindikv3(v3Total);
         });
         axios.get("http://10.35.13.108:8501/getceviz").then((response) => {
             let jsondata = response.data;
             let row = [];
-            let oldv1 = 0;
-            let oldv2 = 0;
-            let oldv3 = 0;
-            for (let g = 0; g < jsondata.length; g++) {
-                const element = jsondata[g];
-                let net = element.kantar - element.dara;
-                row.push({ ...element, net: net });
-                let d = element.date.split("/")[0];
-                let h = element.hour.split(":")[0];
-                let nowd = moment().format("DD");
-                if (d === nowd) {
-                    if (element.kantar.search("V")) {
-                        let nett = parseFloat(element.kantar - element.dara);
+            let v1Total = 0;
+            let v2Total = 0;
+            let v3Total = 0;
+            for (let i = 0; i < jsondata.length; i++) {
+                row.push({ ...jsondata[i], net: jsondata[i].kantar - jsondata[i].dara });
+                let d = jsondata[i].date.split('/')[0]
+                let m = jsondata[i].date.split('/')[1]
+                let h = jsondata[i].hour.split(':')[0]
+                let nowd = moment().format('DD')
+                let nowm = moment().format('MM')
+                if (Number(d) === Number(nowd) && Number(m) === Number(nowm)) {
+                    console.log(h, nowd)
+                    if (jsondata[i].kantar.search('V')) {
+                        let net = parseInt(jsondata[i].kantar - jsondata[i].dara)
                         if (h >= 0 && h <= 7) {
-                            oldv1 += nett;
-                            setCevizv1(oldv1);
+                            v1Total += net
                         } else if (h >= 8 && h <= 15) {
-                            oldv2 += nett;
-                            setCevizv2(oldv2);
+                            v2Total += net
                         } else if (h >= 16 && h <= 23) {
-                            oldv3 += nett;
-                            setCevizv3(oldv3);
+                            v3Total += net
                         }
                     }
                 }
             }
             setCevizrows(row);
+            setCevizv1(v1Total);
+            setCevizv2(v2Total);
+            setCevizv3(v3Total);
         });
     }
 

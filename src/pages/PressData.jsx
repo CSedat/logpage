@@ -144,8 +144,11 @@ export default function App() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedday, selectedmon, selectedyear]);
     return (
-        <div>
-            <div className="grid grid-cols-10 text-center items text-[0.65rem] bg-gray-800 rounded p-1 ">
+        <div className=" flex flex-col">
+            <div className="grid grid-cols-11 text-center items text-[0.65rem] bg-gray-800 rounded p-1 ">
+                <div className=" border border-1 p-3 rounded w-full ">
+                    609-610
+                </div>
                 <div className=" border border-1 p-1 rounded w-full ">
                     <p className="bg-gray-500 rounded">10</p> Ana Piston Geri
                     Çekiliyor
@@ -184,6 +187,34 @@ export default function App() {
                 <div className=" border border-1 p-1 rounded w-full ">
                     <p className="bg-gray-500 rounded">150</p> Bitti, Döngü
                     Bekleniyor
+                </div>
+            </div>
+            <div className="grid grid-cols-8 text-center items text-[0.65rem] bg-gray-800 rounded p-1 ">
+                <div className=" border border-1 p-3 rounded w-full ">
+                    A1-B1 YENİ FP
+                </div>
+                <div className=" border border-1 p-1 rounded w-full ">
+                    <p className="bg-gray-500 rounded">10</p> Ana Piston Geri Çekiliyor
+                </div>
+                <div className=" border border-1 p-1 rounded w-full ">
+                    <p className="bg-gray-500 rounded">(20-30)</p> Araba
+                    Çalışıyor Açım Yapılıyor
+                </div>
+                <div className=" border border-1 p-1 rounded w-full ">
+                    <p className="bg-gray-500 rounded">40</p> Ana Piston
+                    Basılıyor
+                </div>
+                <div className=" border border-1 p-1 rounded w-full ">
+                    <p className="bg-gray-500 rounded">50</p> Besleniyor
+                </div>
+                <div className=" border border-1 p-1 rounded w-full ">
+                    <p className="bg-gray-500 rounded">60</p> Sıkıştırılıyor
+                </div>
+                <div className=" border border-1 p-1 rounded w-full ">
+                    <p className="bg-gray-500 rounded">70</p> Operatör Tarafından Pause Edildi
+                </div>
+                <div className=" border border-1 p-1 rounded w-full ">
+                    <p className="bg-gray-500 rounded">80</p> Bitti, Açılmak İçin Bekleniyor
                 </div>
             </div>
             <div className="mx-auto text-right w-[23rem] grid grid-cols-6 gap-1 bg-gray-800 rounded">
